@@ -28,7 +28,7 @@ final class YearHeaderView: UICollectionReusableView {
         }
     }
     
-    var style: Style = Style() {
+    var style: KVKCalendarStyle = KVKCalendarStyle() {
         didSet {
             titleLabel.textColor = style.year.colorTitleHeader
             titleLabel.font = style.year.fontTitleHeader
@@ -49,7 +49,7 @@ final class YearHeaderView: UICollectionReusableView {
 
 extension YearHeaderView: CalendarSettingProtocol {
     
-    var currentStyle: Style {
+    var currentStyle: KVKCalendarStyle {
         style
     }
     
@@ -63,7 +63,7 @@ extension YearHeaderView: CalendarSettingProtocol {
         titleLabel.frame.size.width = frame.width
     }
     
-    func updateStyle(_ style: Style) {
+    func updateStyle(_ style: KVKCalendarStyle) {
         self.style = style
     }
 }

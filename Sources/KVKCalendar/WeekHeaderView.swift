@@ -8,7 +8,7 @@
 import UIKit
 
 final class WeekHeaderView: UIView {
-    private var style: Style
+    private var style: KVKCalendarStyle
     private let isFromYear: Bool
     private var days = [Date]()
     
@@ -26,7 +26,7 @@ final class WeekHeaderView: UIView {
         }
     }
     
-    init(frame: CGRect, style: Style, fromYear: Bool = false) {
+    init(frame: CGRect, style: KVKCalendarStyle, fromYear: Bool = false) {
         self.style = style
         self.isFromYear = fromYear
         super.init(frame: frame)
@@ -92,7 +92,7 @@ final class WeekHeaderView: UIView {
         }
     }
     
-    private func setDateToTitle(date: Date?, style: Style) {
+    private func setDateToTitle(date: Date?, style: KVKCalendarStyle) {
         if let date = date, !style.month.isHiddenTitleDate, !isFromYear {
             titleLabel.text = date.titleForLocale(style.locale, formatter: style.month.titleFormatter)
             
@@ -107,7 +107,7 @@ final class WeekHeaderView: UIView {
 
 extension WeekHeaderView: CalendarSettingProtocol {
     
-    var currentStyle: Style {
+    var currentStyle: KVKCalendarStyle {
         style
     }
     
@@ -127,7 +127,7 @@ extension WeekHeaderView: CalendarSettingProtocol {
         addViews(frame: self.frame, isFromYear: isFromYear)
     }
     
-    func updateStyle(_ style: Style) {
+    func updateStyle(_ style: KVKCalendarStyle) {
         self.style = style
         setUI()
     }

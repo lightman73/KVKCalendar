@@ -12,8 +12,8 @@ final class StubEventView: UIView {
     
     private let color: UIColor
     
-    init(event: Event, frame: CGRect) {
-        self.color = Event.Color(event.color?.value ?? event.backgroundColor).value
+    init(event: KVKCalendarEvent, frame: CGRect) {
+        self.color = KVKCalendarEvent.Color(event.color?.value ?? event.backgroundColor).value
         super.init(frame: frame)
         backgroundColor = event.backgroundColor
     }

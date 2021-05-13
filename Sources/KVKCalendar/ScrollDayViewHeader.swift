@@ -10,15 +10,15 @@ import UIKit
 final class ScrollDayHeaderView: UIView {
     
     var didTrackScrollOffset: ((CGFloat?, Bool) -> Void)?
-    var didSelectDate: ((Date?, CalendarType) -> Void)?
+    var didSelectDate: ((Date?, KVKCalendarType) -> Void)?
     var didChangeDay: ((TimelinePageView.SwitchPageType) -> Void)?
     
     struct Parameters {
         let frame: CGRect
         let days: [Day]
         var date: Date
-        let type: CalendarType
-        var style: Style
+        let type: KVKCalendarType
+        var style: KVKCalendarStyle
     }
     
     private var params: Parameters
@@ -28,7 +28,7 @@ final class ScrollDayHeaderView: UIView {
     private var trackingTranslation: CGFloat?
     private var subviewCustomHeader: UIView?
     
-    private var style: Style {
+    private var style: KVKCalendarStyle {
         get {
             return params.style
         }
@@ -42,7 +42,7 @@ final class ScrollDayHeaderView: UIView {
     private var calendar: Calendar {
         return params.style.calendar
     }
-    private var type: CalendarType {
+    private var type: KVKCalendarType {
         return params.type
     }
     
@@ -197,7 +197,7 @@ final class ScrollDayHeaderView: UIView {
         }
     }
     
-    private func selectDate(_ date: Date, type: CalendarType) {
+    private func selectDate(_ date: Date, type: KVKCalendarType) {
         if let newSubview = dataSource?.willDisplayHeaderSubview(date: date, frame: subviewFrameForDevice, type: type) {
             subviewCustomHeader?.removeFromSuperview()
             subviewCustomHeader = newSubview
@@ -216,7 +216,7 @@ final class ScrollDayHeaderView: UIView {
 
 extension ScrollDayHeaderView: CalendarSettingProtocol {
     
-    var currentStyle: Style {
+    var currentStyle: KVKCalendarStyle {
         style
     }
     
@@ -321,7 +321,7 @@ extension ScrollDayHeaderView: CalendarSettingProtocol {
         collectionView.reloadData()
     }
     
-    func updateStyle(_ style: Style) {
+    func updateStyle(_ style: KVKCalendarStyle) {
         self.style = style
         setUI()
         scrollToDate(date, isAnimate: false)

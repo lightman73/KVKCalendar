@@ -1,5 +1,5 @@
 //
-//  EventViewGeneral.swift
+//  KVKCalendarEventViewGeneral.swift
 //  KVKCalendar
 //
 //  Created by Sergei Kviatkovskii on 19.07.2020.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-open class EventViewGeneral: UIView, CalendarTimer {
+open class KVKCalendarEventViewGeneral: UIView, CalendarTimer {
     
     public enum EventViewState: Int {
         case resize, move, none
@@ -19,9 +19,9 @@ open class EventViewGeneral: UIView, CalendarTimer {
     private var originalLocation: CGPoint = .zero
     private let states: Set<EventViewState>
     
-    public var event: Event
+    public var event: KVKCalendarEvent
     public var color: UIColor
-    public var style: Style
+    public var style: KVKCalendarStyle
     public var isSelected: Bool = false
     public var stateEvent: EventViewState = .none
     
@@ -31,10 +31,10 @@ open class EventViewGeneral: UIView, CalendarTimer {
         return gesture
     }()
     
-    public init(style: Style, event: Event, frame: CGRect) {
+    public init(style: KVKCalendarStyle, event: KVKCalendarEvent, frame: CGRect) {
         self.style = style
         self.event = event
-        self.color = Event.Color(event.color?.value ?? event.backgroundColor).value
+        self.color = KVKCalendarEvent.Color(event.color?.value ?? event.backgroundColor).value
         self.states = style.event.states
         super.init(frame: frame)
         
@@ -43,9 +43,9 @@ open class EventViewGeneral: UIView, CalendarTimer {
     }
     
     required public init?(coder: NSCoder) {
-        let event = Event(ID: "0")
+        let event = KVKCalendarEvent(ID: "0")
         self.event = event
-        self.style = Style()
+        self.style = KVKCalendarStyle()
         self.color = event.backgroundColor
         self.states = style.event.states
         super.init(coder: coder)
@@ -177,7 +177,7 @@ open class EventViewGeneral: UIView, CalendarTimer {
     }
 }
 
-extension EventViewGeneral {
+extension KVKCalendarEventViewGeneral {
     var isAvailableResize: Bool {
         return states.contains(.resize)
     }
@@ -192,7 +192,7 @@ extension EventViewGeneral {
 }
 
 @available(iOS 13, *)
-extension EventViewGeneral: UIContextMenuInteractionDelegate {
+extension KVKCalendarEventViewGeneral: UIContextMenuInteractionDelegate {
     var interaction: UIContextMenuInteraction {
         return UIContextMenuInteraction(delegate: self)
     }
@@ -203,21 +203,21 @@ extension EventViewGeneral: UIContextMenuInteractionDelegate {
 }
 
 protocol EventDelegate: AnyObject {
-    func didStartResizeEvent(_ event: Event, gesture: UILongPressGestureRecognizer, view: UIView)
-    func didEndResizeEvent(_ event: Event, gesture: UILongPressGestureRecognizer)
-    func didStartMovingEvent(_ event: Event, gesture: UILongPressGestureRecognizer, view: UIView)
-    func didEndMovingEvent(_ event: Event, gesture: UILongPressGestureRecognizer)
-    func didChangeMovingEvent(_ event: Event, gesture: UILongPressGestureRecognizer)
-    func didSelectEvent(_ event: Event, gesture: UITapGestureRecognizer)
-    func deselectEvent(_ event: Event)
+    func didStartResizeEvent(_ event: KVKCalendarEvent, gesture: UILongPressGestureRecognizer, view: UIView)
+    func didEndResizeEvent(_ event: KVKCalendarEvent, gesture: UILongPressGestureRecognizer)
+    func didStartMovingEvent(_ event: KVKCalendarEvent, gesture: UILongPressGestureRecognizer, view: UIView)
+    func didEndMovingEvent(_ event: KVKCalendarEvent, gesture: UILongPressGestureRecognizer)
+    func didChangeMovingEvent(_ event: KVKCalendarEvent, gesture: UILongPressGestureRecognizer)
+    func didSelectEvent(_ event: KVKCalendarEvent, gesture: UITapGestureRecognizer)
+    func deselectEvent(_ event: KVKCalendarEvent)
 }
 
 protocol EventDataSource: AnyObject {
     @available(iOS 13.0, *)
-    func willDisplayContextMenu(_ event: Event, date: Date?) -> UIContextMenuConfiguration?
+    func willDisplayContextMenu(_ event: KVKCalendarEvent, date: Date?) -> UIContextMenuConfiguration?
 }
 
 extension EventDataSource {
     @available(iOS 13.0, *)
-    func willDisplayContextMenu(_ event: Event, date: Date?) -> UIContextMenuConfiguration? { return nil }
+    func willDisplayContextMenu(_ event: KVKCalendarEvent, date: Date?) -> UIContextMenuConfiguration? { return nil }
 }

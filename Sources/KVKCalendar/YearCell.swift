@@ -40,7 +40,7 @@ final class YearCell: UICollectionViewCell {
         }
     }
     
-    var style = Style() {
+    var style = KVKCalendarStyle() {
         didSet {
             titleLabel.font = style.year.fontTitle
             titleLabel.textColor = style.year.colorTitle

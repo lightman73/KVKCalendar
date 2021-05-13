@@ -41,14 +41,14 @@ struct EventTime: Equatable, Hashable {
 typealias ResizeTime = (hour: Int, minute: Int)
 
 protocol TimelineDelegate: AnyObject {
-    func didDisplayEvents(_ events: [Event], dates: [Date?])
-    func didSelectEvent(_ event: Event, frame: CGRect?)
+    func didDisplayEvents(_ events: [KVKCalendarEvent], dates: [Date?])
+    func didSelectEvent(_ event: KVKCalendarEvent, frame: CGRect?)
     func nextDate()
     func previousDate()
     func swipeX(transform: CGAffineTransform, stop: Bool)
-    func didChangeEvent(_ event: Event, minute: Int, hour: Int, point: CGPoint, newDay: Int?)
-    func didAddNewEvent(_ event: Event, minute: Int, hour: Int, point: CGPoint)
-    func didResizeEvent(_ event: Event, startTime: ResizeTime, endTime: ResizeTime)
+    func didChangeEvent(_ event: KVKCalendarEvent, minute: Int, hour: Int, point: CGPoint, newDay: Int?)
+    func didAddNewEvent(_ event: KVKCalendarEvent, minute: Int, hour: Int, point: CGPoint)
+    func didResizeEvent(_ event: KVKCalendarEvent, startTime: ResizeTime, endTime: ResizeTime)
 }
 
 extension TimelineDelegate {
@@ -58,15 +58,15 @@ extension TimelineDelegate {
 protocol EventDateProtocol {}
 
 extension EventDateProtocol {
-    func compareStartDate(_ date: Date?, with event: Event) -> Bool {
+    func compareStartDate(_ date: Date?, with event: KVKCalendarEvent) -> Bool {
         return event.start.year == date?.year && event.start.month == date?.month && event.start.day == date?.day
     }
     
-    func compareEndDate(_ date: Date?, with event: Event) -> Bool {
+    func compareEndDate(_ date: Date?, with event: KVKCalendarEvent) -> Bool {
         return event.end.year == date?.year && event.end.month == date?.month && event.end.day == date?.day
     }
     
-    func checkMultipleDate(_ date: Date?, with event: Event) -> Bool {
+    func checkMultipleDate(_ date: Date?, with event: KVKCalendarEvent) -> Bool {
         guard let timeInterval = date?.timeIntervalSince1970 else { return false }
         
         return event.start.day != event.end.day && event.start.timeIntervalSince1970...event.end.timeIntervalSince1970 ~= timeInterval && event.start.year == date?.year && event.start.month == date?.month
@@ -75,7 +75,7 @@ extension EventDateProtocol {
 
 extension TimelineView {
     struct StubEvent {
-        let event: Event
+        let event: KVKCalendarEvent
         let frame: CGRect
     }
     

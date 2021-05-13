@@ -11,9 +11,9 @@ final class MonthData: EventDateProtocol {
     
     struct Parameters {
         let data: CalendarData
-        let startDay: StartDayType
+        let startDay: KVKCalendarStartDayType
         let calendar: Calendar
-        let monthStyle: MonthStyle
+        let monthStyle: KVKCalendarMonthStyle
     }
     
     var willSelectDate: Date
@@ -28,7 +28,7 @@ final class MonthData: EventDateProtocol {
     let rowsInPage = 6
     let columnsInPage = 7
     var isFirstLoad = true
-    var movingEvent: EventViewGeneral?
+    var movingEvent: KVKCalendarEventViewGeneral?
     var selectedDates: Set<Date> = []
     
     private let calendar: Calendar
@@ -103,14 +103,14 @@ final class MonthData: EventDateProtocol {
         return selectedDates
     }
     
-    func reloadEventsInDays(events: [Event], date: Date) -> (events: [Event], dates: [Date?]) {
+    func reloadEventsInDays(events: [KVKCalendarEvent], date: Date) -> (events: [KVKCalendarEvent], dates: [Date?]) {
         let recurringEvents = events.filter({ $0.recurringType != .none })
         guard let idxSection = data.months.firstIndex(where: { $0.date.month == date.month && $0.date.year == date.year }) else {
             return ([], [])
         }
         
         let days = data.months[idxSection].days
-        var displayableEvents = [Event]()
+        var displayableEvents = [KVKCalendarEvent]()
         let updatedDays = days.reduce([], { (acc, day) -> [Day] in
             var newDay = day
             guard newDay.events.isEmpty else { return acc + [day] }
@@ -119,9 +119,9 @@ final class MonthData: EventDateProtocol {
             let filteredAllDayEvents = events.filter({ $0.isAllDay })
             let allDayEvents = filteredAllDayEvents.filter({ compareStartDate(day.date, with: $0) || compareEndDate(day.date, with: $0) })
             
-            let recurringEventByDate: [Event]
+            let recurringEventByDate: [KVKCalendarEvent]
             if !recurringEvents.isEmpty, let date = day.date {
-                recurringEventByDate = recurringEvents.reduce([], { (acc, event) -> [Event] in
+                recurringEventByDate = recurringEvents.reduce([], { (acc, event) -> [KVKCalendarEvent] in
                     guard !filteredEventsByDay.contains(where: { $0.ID == event.ID })
                             && date.compare(event.start) == .orderedDescending else { return acc }
                     

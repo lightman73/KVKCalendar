@@ -8,16 +8,16 @@
 import UIKit
 
 final class AllDayEventView: UIView {
-    let events: [Event]
+    let events: [KVKCalendarEvent]
     weak var delegate: AllDayEventDelegate?
     
-    init(events: [Event], frame: CGRect, style: AllDayStyle, date: Date?) {
+    init(events: [KVKCalendarEvent], frame: CGRect, style: KVKCalendarAllDayStyle, date: Date?) {
         self.events = events
         super.init(frame: frame)
         backgroundColor = style.backgroundColor
         
-        let startEvents = events.map({ AllDayEvent(id: $0.ID, text: $0.text, date: $0.start, color: Event.Color($0.color?.value ?? $0.backgroundColor).value) })
-        let endEvents = events.map({ AllDayEvent(id: $0.ID, text: $0.text, date: $0.end, color: Event.Color($0.color?.value ?? $0.backgroundColor).value) })
+        let startEvents = events.map({ AllDayEvent(id: $0.ID, text: $0.text, date: $0.start, color: KVKCalendarEvent.Color($0.color?.value ?? $0.backgroundColor).value) })
+        let endEvents = events.map({ AllDayEvent(id: $0.ID, text: $0.text, date: $0.end, color: KVKCalendarEvent.Color($0.color?.value ?? $0.backgroundColor).value) })
         let result = startEvents + endEvents
         let distinct = result.reduce([]) { (acc, event) -> [AllDayEvent] in
             guard acc.contains(where: { $0.date.day == event.date.day && $0.id.hashValue == event.id.hashValue }) else {
@@ -109,14 +109,14 @@ private struct AllDayEvent {
     let color: UIColor
 }
 
-extension AllDayEvent: EventProtocol {
-    func compare(_ event: Event) -> Bool {
+extension AllDayEvent: KVKCalendarEventProtocol {
+    func compare(_ event: KVKCalendarEvent) -> Bool {
         return id.hashValue == event.hash
     }
 }
 
 final class AllDayTitleView: UIView {
-    init(frame: CGRect, style: AllDayStyle) {
+    init(frame: CGRect, style: KVKCalendarAllDayStyle) {
         super.init(frame: frame)
         backgroundColor = style.backgroundColor
         
@@ -138,5 +138,5 @@ final class AllDayTitleView: UIView {
 }
 
 protocol AllDayEventDelegate: AnyObject {
-    func didSelectAllDayEvent(_ event: Event, frame: CGRect?)
+    func didSelectAllDayEvent(_ event: KVKCalendarEvent, frame: CGRect?)
 }

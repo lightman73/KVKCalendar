@@ -10,7 +10,7 @@ import UIKit
 final class WeekView: UIView {
     private var visibleDates: [Date?] = []
     private var data: WeekData
-    private var style: Style
+    private var style: KVKCalendarStyle
     
     weak var delegate: DisplayDelegate?
     weak var dataSource: DisplayDataSource?
@@ -99,7 +99,7 @@ final class WeekView: UIView {
         return label
     }()
     
-    init(data: WeekData, frame: CGRect, style: Style) {
+    init(data: WeekData, frame: CGRect, style: KVKCalendarStyle) {
         self.style = style
         self.data = data
         super.init(frame: frame)
@@ -147,7 +147,7 @@ final class WeekView: UIView {
         visibleDates = getVisibleDatesFor(date: data.date)
     }
     
-    func reloadData(_ events: [Event]) {
+    func reloadData(_ events: [KVKCalendarEvent]) {
         data.events = events
         timelinePages.timelineView?.create(dates: visibleDates, events: events, selectedDate: data.date)
     }
@@ -176,13 +176,13 @@ final class WeekView: UIView {
 }
 
 extension WeekView: DisplayDataSource {
-    func willDisplayEventView(_ event: Event, frame: CGRect, date: Date?) -> EventViewGeneral? {
+    func willDisplayEventView(_ event: KVKCalendarEvent, frame: CGRect, date: Date?) -> KVKCalendarEventViewGeneral? {
         return dataSource?.willDisplayEventView(event, frame: frame, date: date)
     }
 }
 
 extension WeekView {
-    func didSelectDateScrollHeader(_ date: Date?, type: CalendarType) {
+    func didSelectDateScrollHeader(_ date: Date?, type: KVKCalendarType) {
         guard let selectDate = date else { return }
         
         data.date = selectDate
@@ -196,7 +196,7 @@ extension WeekView {
 
 extension WeekView: CalendarSettingProtocol {
     
-    var currentStyle: Style {
+    var currentStyle: KVKCalendarStyle {
         style
     }
     
@@ -219,7 +219,7 @@ extension WeekView: CalendarSettingProtocol {
         timelinePages.reloadCacheControllers()
     }
     
-    func updateStyle(_ style: Style) {
+    func updateStyle(_ style: KVKCalendarStyle) {
         self.style = style
         scrollHeaderDay.updateStyle(style)
         timelinePages.updateStyle(style)
@@ -239,11 +239,11 @@ extension WeekView: CalendarSettingProtocol {
 }
 
 extension WeekView: TimelineDelegate {
-    func didDisplayEvents(_ events: [Event], dates: [Date?]) {
+    func didDisplayEvents(_ events: [KVKCalendarEvent], dates: [Date?]) {
         delegate?.didDisplayEvents(events, dates: dates, type: .week)
     }
     
-    func didSelectEvent(_ event: Event, frame: CGRect?) {
+    func didSelectEvent(_ event: KVKCalendarEvent, frame: CGRect?) {
         delegate?.didSelectEvent(event, type: .week, frame: frame)
     }
     
@@ -261,7 +261,7 @@ extension WeekView: TimelineDelegate {
         scrollHeaderDay.scrollHeaderByTransform(transform)
     }
     
-    func didResizeEvent(_ event: Event, startTime: ResizeTime, endTime: ResizeTime) {
+    func didResizeEvent(_ event: KVKCalendarEvent, startTime: ResizeTime, endTime: ResizeTime) {
         var startComponents = DateComponents()
         startComponents.year = event.start.year
         startComponents.month = event.start.month
@@ -281,7 +281,7 @@ extension WeekView: TimelineDelegate {
         delegate?.didChangeEvent(event, start: startDate, end: endDate)
     }
     
-    func didAddNewEvent(_ event: Event, minute: Int, hour: Int, point: CGPoint) {
+    func didAddNewEvent(_ event: KVKCalendarEvent, minute: Int, hour: Int, point: CGPoint) {
         var components = DateComponents()
         components.year = event.start.year
         components.month = event.start.month
@@ -292,7 +292,7 @@ extension WeekView: TimelineDelegate {
         delegate?.didAddNewEvent(event, newDate)
     }
     
-    func didChangeEvent(_ event: Event, minute: Int, hour: Int, point: CGPoint, newDay: Int?) {
+    func didChangeEvent(_ event: KVKCalendarEvent, minute: Int, hour: Int, point: CGPoint, newDay: Int?) {
         var day = event.start.day
         if let newDayEvent = newDay {
             day = newDayEvent

@@ -10,9 +10,9 @@ import Foundation
 struct DayData {
     let days: [Day]
     var date: Date
-    var events: [Event] = []
+    var events: [KVKCalendarEvent] = []
     
-    init(data: CalendarData, startDay: StartDayType) {
+    init(data: CalendarData, startDay: KVKCalendarStartDayType) {
         self.date = data.date
         var tempDays = data.months.reduce([], { $0 + $1.days })
         let startIdx = tempDays.count > 7 ? tempDays.count - 7 : tempDays.count

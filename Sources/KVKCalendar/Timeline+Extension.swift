@@ -26,7 +26,7 @@ extension TimelineView: UIScrollViewDelegate {
         guard !style.timeline.isHiddenStubEvent else { return }
         
         let events = scrollView.subviews.compactMap { (view) -> StubEvent? in
-            guard let item = view as? EventViewGeneral else { return nil }
+            guard let item = view as? KVKCalendarEventViewGeneral else { return nil }
             
             return StubEvent(event: item.event, frame: item.frame)
         }
@@ -87,7 +87,7 @@ extension TimelineView: UIScrollViewDelegate {
         }
     }
     
-    private func getDayEvent(_ event: Event, scrollDirection: ScrollDirectionType) -> Int {
+    private func getDayEvent(_ event: KVKCalendarEvent, scrollDirection: ScrollDirectionType) -> Int {
         if event.start.day == event.end.day {
             return event.start.day
         } else {
@@ -129,7 +129,7 @@ extension TimelineView {
         return UIApplication.shared.isAvailableBottomHomeIndicator ? 30 : 5
     }
     
-    func topStabStackOffsetY(allDayEventsIsPinned: Bool, axis: AllDayStyle.AxisMode, eventsCount: Int, height: CGFloat) -> CGFloat {
+    func topStabStackOffsetY(allDayEventsIsPinned: Bool, axis: KVKCalendarAllDayStyle.AxisMode, eventsCount: Int, height: CGFloat) -> CGFloat {
         switch axis {
         case .horizontal:
             return allDayEventsIsPinned ? 30 : 5
@@ -180,13 +180,13 @@ extension TimelineView {
             scrollView.subviews.filter({ $0 is AllDayEventView }).forEach({ $0.isUserInteractionEnabled = enable })
         }
         
-        scrollView.subviews.filter({ $0 is EventViewGeneral }).forEach({ $0.isUserInteractionEnabled = enable })
+        scrollView.subviews.filter({ $0 is KVKCalendarEventViewGeneral }).forEach({ $0.isUserInteractionEnabled = enable })
     }
     
     @objc func forceDeselectEvent() {
         removeEventResizeView()
         
-        guard let eventViewGeneral = scrollView.subviews.first(where: { ($0 as? EventViewGeneral)?.isSelected == true }) as? EventViewGeneral else { return }
+        guard let eventViewGeneral = scrollView.subviews.first(where: { ($0 as? KVKCalendarEventViewGeneral)?.isSelected == true }) as? KVKCalendarEventViewGeneral else { return }
         
         guard let eventView = eventViewGeneral as? EventView else {
             deselectEvent?(eventViewGeneral.event)
@@ -200,8 +200,8 @@ extension TimelineView {
         create(dates: dates, events: events, selectedDate: selectedDate)
     }
     
-    func deselectEvent(_ event: Event, animated: Bool) {
-        guard let eventViewGeneral = scrollView.subviews.first(where: { ($0 as? EventViewGeneral)?.event.ID == event.ID }) as? EventViewGeneral else { return }
+    func deselectEvent(_ event: KVKCalendarEvent, animated: Bool) {
+        guard let eventViewGeneral = scrollView.subviews.first(where: { ($0 as? KVKCalendarEventViewGeneral)?.event.ID == event.ID }) as? KVKCalendarEventViewGeneral else { return }
         
         guard let eventView = eventViewGeneral as? EventView else {
             deselectEvent?(eventViewGeneral.event)
@@ -211,7 +211,7 @@ extension TimelineView {
         eventView.deselectEvent()
     }
     
-    func createAllDayEvents(events: [Event], date: Date?, width: CGFloat, originX: CGFloat) {
+    func createAllDayEvents(events: [KVKCalendarEvent], date: Date?, width: CGFloat, originX: CGFloat) {
         guard !events.isEmpty else { return }
         
         let pointY = style.allDay.isPinned ? 0 : -style.allDay.height
@@ -267,7 +267,7 @@ extension TimelineView {
             time.textAlignment = .center
             time.textColor = style.timeline.timeColor
             time.text = hour
-            let hourTmp = TimeHourSystem.twentyFour.hours[idx]
+            let hourTmp = KVKCalendarTimeHourSystem.twentyFour.hours[idx]
             time.valueHash = timeLabelFormatter.date(from: hourTmp)?.hour.hashValue
             time.tag = idx - start
             times.append(time)
@@ -301,7 +301,7 @@ extension TimelineView {
         return line
     }
     
-    func getEventView(style: Style, event: Event, frame: CGRect, date: Date? = nil) -> EventViewGeneral {
+    func getEventView(style: KVKCalendarStyle, event: KVKCalendarEvent, frame: CGRect, date: Date? = nil) -> KVKCalendarEventViewGeneral {
         if let pageView = dataSource?.willDisplayEventView(event, frame: frame, date: date) {
             return pageView
         } else {
@@ -315,7 +315,7 @@ extension TimelineView {
         var point = gesture.location(in: scrollView)
         point.y = (point.y - eventPreviewYOffset) - style.timeline.offsetEvent - 6
         let time = calculateChangingTime(pointY: point.y)
-        var newEvent = Event(ID: Event.idForNewEvent)
+        var newEvent = KVKCalendarEvent(ID: KVKCalendarEvent.idForNewEvent)
         newEvent.text = style.event.textForNewEvent
         let newEventPreview = getEventView(style: style, event: newEvent, frame: CGRect(origin: point, size: eventPreviewSize))
         newEventPreview.stateEvent = .move
@@ -358,7 +358,7 @@ extension TimelineView {
     }
     
     private func getAllScrollableEvents() -> [UIView] {
-        let events = scrollView.subviews.filter({ $0 is EventViewGeneral })
+        let events = scrollView.subviews.filter({ $0 is KVKCalendarEventViewGeneral })
         
         let eventsAllDay: [UIView]
         if style.allDay.isPinned {
@@ -436,7 +436,7 @@ extension TimelineView {
 
 extension TimelineView: EventDataSource {
     @available(iOS 13, *)
-    func willDisplayContextMenu(_ event: Event, date: Date?) -> UIContextMenuConfiguration? {
+    func willDisplayContextMenu(_ event: KVKCalendarEvent, date: Date?) -> UIContextMenuConfiguration? {
         return nil
     }
 }
@@ -472,15 +472,15 @@ extension TimelineView: ResizeEventViewDelegate {
         movingMinuteLabel.removeFromSuperview()
     }
     
-    func didStartMoveResizeEvent(_ event: Event, gesture: UIPanGestureRecognizer, view: UIView) {
+    func didStartMoveResizeEvent(_ event: KVKCalendarEvent, gesture: UIPanGestureRecognizer, view: UIView) {
         
     }
     
-    func didChangeMoveResizeEvent(_ event: Event, gesture: UIPanGestureRecognizer) {
+    func didChangeMoveResizeEvent(_ event: KVKCalendarEvent, gesture: UIPanGestureRecognizer) {
         
     }
     
-    func didEndMoveResizeEvent(_ event: Event, gesture: UIPanGestureRecognizer) {
+    func didEndMoveResizeEvent(_ event: KVKCalendarEvent, gesture: UIPanGestureRecognizer) {
         
     }
 }
@@ -495,16 +495,16 @@ extension TimelineView: EventDelegate {
         return eventPreviewSize.height * 0.7
     }
     
-    func deselectEvent(_ event: Event) {
+    func deselectEvent(_ event: KVKCalendarEvent) {
         deselectEvent?(event)
     }
     
-    func didSelectEvent(_ event: Event, gesture: UITapGestureRecognizer) {
+    func didSelectEvent(_ event: KVKCalendarEvent, gesture: UITapGestureRecognizer) {
         forceDeselectEvent()
         delegate?.didSelectEvent(event, frame: gesture.view?.frame)
     }
     
-    func didStartResizeEvent(_ event: Event, gesture: UILongPressGestureRecognizer, view: UIView) {
+    func didStartResizeEvent(_ event: KVKCalendarEvent, gesture: UILongPressGestureRecognizer, view: UIView) {
         forceDeselectEvent()
         isResizeEnableMode = true
         
@@ -537,11 +537,11 @@ extension TimelineView: EventDelegate {
         enableAllEvents(enable: false)
     }
     
-    func didEndResizeEvent(_ event: Event, gesture: UILongPressGestureRecognizer) {
+    func didEndResizeEvent(_ event: KVKCalendarEvent, gesture: UILongPressGestureRecognizer) {
         removeEventResizeView()
     }
     
-    func didStartMovingEvent(_ event: Event, gesture: UILongPressGestureRecognizer, view: UIView) {
+    func didStartMovingEvent(_ event: KVKCalendarEvent, gesture: UILongPressGestureRecognizer, view: UIView) {
         removeEventResizeView()
         let location = gesture.location(in: scrollView)
         
@@ -582,7 +582,7 @@ extension TimelineView: EventDelegate {
         }
     }
     
-    func didEndMovingEvent(_ event: Event, gesture: UILongPressGestureRecognizer) {
+    func didEndMovingEvent(_ event: KVKCalendarEvent, gesture: UILongPressGestureRecognizer) {
         eventPreview?.removeFromSuperview()
         eventPreview = nil
         movingMinuteLabel.removeFromSuperview()
@@ -610,7 +610,7 @@ extension TimelineView: EventDelegate {
         shadowView.removeFromSuperview()
     }
     
-    func didChangeMovingEvent(_ event: Event, gesture: UILongPressGestureRecognizer) {
+    func didChangeMovingEvent(_ event: KVKCalendarEvent, gesture: UILongPressGestureRecognizer) {
         let location = gesture.location(in: scrollView)
         let leftOffset = style.timeline.widthTime + style.timeline.offsetTimeX + style.timeline.offsetLineLeft
         guard scrollView.frame.width >= (location.x + 20), (location.x - 20) >= leftOffset else { return }
@@ -684,7 +684,7 @@ extension TimelineView: EventDelegate {
 
 extension TimelineView: CalendarSettingProtocol {
     
-    var currentStyle: Style {
+    var currentStyle: KVKCalendarStyle {
         style
     }
     
@@ -707,7 +707,7 @@ extension TimelineView: CalendarSettingProtocol {
         currentLineView.reloadFrame(frame)
     }
     
-    func updateStyle(_ style: Style) {
+    func updateStyle(_ style: KVKCalendarStyle) {
         self.style = style
         currentLineView.updateStyle(style)
         setUI()
@@ -715,7 +715,7 @@ extension TimelineView: CalendarSettingProtocol {
 }
 
 extension TimelineView: AllDayEventDelegate {
-    func didSelectAllDayEvent(_ event: Event, frame: CGRect?) {
+    func didSelectAllDayEvent(_ event: KVKCalendarEvent, frame: CGRect?) {
         delegate?.didSelectEvent(event, frame: frame)
     }
 }

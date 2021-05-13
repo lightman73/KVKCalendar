@@ -8,12 +8,12 @@
 import UIKit
 import EventKit
 
-public struct DateParameter {
+public struct KVKCalendarDateParameter {
     public var date: Date?
-    public var type: DayType?
+    public var type: KVKCalendarDayType?
 }
 
-public enum TimeHourSystem: Int {
+public enum KVKCalendarTimeHourSystem: Int {
     @available(swift, deprecated: 0.3.6, obsoleted: 0.3.7, renamed: "twelve")
     case twelveHour = 0
     @available(swift, deprecated: 0.3.6, obsoleted: 0.3.7, renamed: "twentyFour")
@@ -46,7 +46,7 @@ public enum TimeHourSystem: Int {
     }
     
     @available(*, deprecated, renamed: "current")
-    public static var currentSystemOnDevice: TimeHourSystem? {
+    public static var currentSystemOnDevice: KVKCalendarTimeHourSystem? {
         let locale = NSLocale.current
         guard let formatter = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: locale) else { return nil }
         
@@ -57,7 +57,7 @@ public enum TimeHourSystem: Int {
         }
     }
     
-    public static var current: TimeHourSystem? {
+    public static var current: KVKCalendarTimeHourSystem? {
         let locale = NSLocale.current
         guard let formatter = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: locale) else { return nil }
         
@@ -78,11 +78,11 @@ public enum TimeHourSystem: Int {
     }
 }
 
-public enum CalendarType: String, CaseIterable {
+public enum KVKCalendarType: String, CaseIterable {
     case day, week, month, year, list
 }
 
-// MARK: Event model
+// MARK: KVKCalendarEvent model
 
 @available(swift, deprecated: 0.4.1, obsoleted: 0.4.2, renamed: "Event.Color")
 public struct EventColor {
@@ -95,7 +95,7 @@ public struct EventColor {
     }
 }
 
-public struct Event {
+public struct KVKCalendarEvent {
     static let idForNewEvent = "-999"
     
     /// unique identifier of Event
@@ -103,7 +103,7 @@ public struct Event {
     public var text: String = ""
     public var start: Date = Date()
     public var end: Date = Date()
-    public var color: Event.Color? = Event.Color(.systemBlue) {
+    public var color: KVKCalendarEvent.Color? = KVKCalendarEvent.Color(.systemBlue) {
         didSet {
             guard let tempColor = color else { return }
             
@@ -123,11 +123,11 @@ public struct Event {
     public var eventData: Any? = nil
     public var data: Any? = nil
     
-    public var recurringType: Event.RecurringType = .none
+    public var recurringType: KVKCalendarEvent.RecurringType = .none
     
     ///individual event customization
     ///(in-progress) works only with a default height
-    public var style: EventStyle? = nil
+    public var style: KVKCalendarEventStyle? = nil
     
     public init(ID: String) {
         self.ID = ID
@@ -139,7 +139,7 @@ public struct Event {
         }
     }
     
-    func prepareColor(_ color: Event.Color) -> (background: UIColor, text: UIColor) {
+    func prepareColor(_ color: KVKCalendarEvent.Color) -> (background: UIColor, text: UIColor) {
         let bgColor = color.value.withAlphaComponent(color.alpha)
         var hue: CGFloat = 0, saturation: CGFloat = 0, brightness: CGFloat = 0, alpha: CGFloat = 0
         color.value.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
@@ -151,15 +151,15 @@ public struct Event {
     }
 }
 
-extension Event {
+extension KVKCalendarEvent {
     var hash: Int {
         return ID.hashValue
     }
 }
 
-public extension Event {
+public extension KVKCalendarEvent {
     var isNew: Bool {
-        return ID == Event.idForNewEvent
+        return ID == KVKCalendarEvent.idForNewEvent
     }
     
     enum RecurringType: Int {
@@ -182,14 +182,14 @@ public enum RecurringType: Int {
     case everyDay, everyWeek, everyMonth, everyYear, none
 }
 
-extension Event: EventProtocol {
-    public func compare(_ event: Event) -> Bool {
+extension KVKCalendarEvent: KVKCalendarEventProtocol {
+    public func compare(_ event: KVKCalendarEvent) -> Bool {
         return hash == event.hash
     }
 }
 
-extension Event {
-    func updateDate(newDate: Date?, calendar: Calendar = Calendar.current) -> Event? {
+extension KVKCalendarEvent {
+    func updateDate(newDate: Date?, calendar: Calendar = Calendar.current) -> KVKCalendarEvent? {
         var startComponents = DateComponents()
         startComponents.year = newDate?.year
         startComponents.month = newDate?.month
@@ -235,21 +235,21 @@ extension Event {
     }
 }
 
-// MARK: - Event protocol
+// MARK: - KVKCalendarEvent protocol
 
-public protocol EventProtocol {
-    func compare(_ event: Event) -> Bool
+public protocol KVKCalendarEventProtocol {
+    func compare(_ event: KVKCalendarEvent) -> Bool
 }
 
 // MARK: - Settings protocol
 
 protocol CalendarSettingProtocol: AnyObject {
     
-    var currentStyle: Style { get }
+    var currentStyle: KVKCalendarStyle { get }
     
     func reloadFrame(_ frame: CGRect)
-    func updateStyle(_ style: Style)
-    func reloadData(_ events: [Event])
+    func updateStyle(_ style: KVKCalendarStyle)
+    func reloadData(_ events: [KVKCalendarEvent])
     func setDate(_ date: Date)
     func setUI()
     
@@ -257,95 +257,95 @@ protocol CalendarSettingProtocol: AnyObject {
 
 extension CalendarSettingProtocol {
     
-    func reloadData(_ events: [Event]) {}
+    func reloadData(_ events: [KVKCalendarEvent]) {}
     func setDate(_ date: Date) {}
     
 }
 
 // MARK: - Data source protocol
 
-public protocol CalendarDataSource: AnyObject {
+public protocol KVKCalendarDataSource: AnyObject {
     /// get events to display on view
     /// also this method returns a system events from iOS calendars if you set the property `systemCalendar` in style
-    func eventsForCalendar(systemEvents: [EKEvent]) -> [Event]
+    func eventsForCalendar(systemEvents: [EKEvent]) -> [KVKCalendarEvent]
     
-    func willDisplayDate(_ date: Date?, events: [Event])
+    func willDisplayDate(_ date: Date?, events: [KVKCalendarEvent])
     
     /// Use this method to add a custom event view
-    func willDisplayEventView(_ event: Event, frame: CGRect, date: Date?) -> EventViewGeneral?
+    func willDisplayEventView(_ event: KVKCalendarEvent, frame: CGRect, date: Date?) -> KVKCalendarEventViewGeneral?
     
     /// Use this method to add a custom header view (works on Day, Week, Month)
-    func willDisplayHeaderSubview(date: Date?, frame: CGRect, type: CalendarType) -> UIView?
+    func willDisplayHeaderSubview(date: Date?, frame: CGRect, type: KVKCalendarType) -> UIView?
     
     /// Use the method to replace the collectionView. Works for month/year View
-    func willDisplayCollectionView(frame: CGRect, type: CalendarType) -> UICollectionView?
+    func willDisplayCollectionView(frame: CGRect, type: KVKCalendarType) -> UICollectionView?
     
     func willDisplayEventViewer(date: Date, frame: CGRect) -> UIView?
     
     /// **DEPRECATED**
     @available(*, deprecated, renamed: "dequeueCell")
-    func dequeueDateCell(date: Date?, type: CalendarType, collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell?
+    func dequeueDateCell(date: Date?, type: KVKCalendarType, collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell?
     
     /// **DEPRECATED**
     @available(*, deprecated, renamed: "dequeueHeader")
-    func dequeueHeaderView(date: Date?, type: CalendarType, collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionReusableView?
+    func dequeueHeaderView(date: Date?, type: KVKCalendarType, collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionReusableView?
     
     /// **DEPRECATED**
     @available(*, deprecated, renamed: "dequeueCell")
     func dequeueListCell(date: Date?, tableView: UITableView, indexPath: IndexPath) -> UITableViewCell?
     
     /// Use this method to add a custom day cell
-    func dequeueCell<T: UIScrollView>(dateParameter: DateParameter, type: CalendarType, view: T, indexPath: IndexPath) -> KVKCalendarCellProtocol?
+    func dequeueCell<T: UIScrollView>(dateParameter: KVKCalendarDateParameter, type: KVKCalendarType, view: T, indexPath: IndexPath) -> KVKCalendarCellProtocol?
     
     /// Use this method to add a header view
-    func dequeueHeader<T: UIScrollView>(date: Date?, type: CalendarType, view: T, indexPath: IndexPath) -> KVKCalendarHeaderProtocol?
+    func dequeueHeader<T: UIScrollView>(date: Date?, type: KVKCalendarType, view: T, indexPath: IndexPath) -> KVKCalendarHeaderProtocol?
 }
 
-public extension CalendarDataSource {
+public extension KVKCalendarDataSource {
     func willDisplayEventViewer(date: Date, frame: CGRect) -> UIView? { return nil }
     
-    func willDisplayDate(_ date: Date?, events: [Event]) {}
+    func willDisplayDate(_ date: Date?, events: [KVKCalendarEvent]) {}
     
-    func willDisplayEventView(_ event: Event, frame: CGRect, date: Date?) -> EventViewGeneral? { return nil }
+    func willDisplayEventView(_ event: KVKCalendarEvent, frame: CGRect, date: Date?) -> KVKCalendarEventViewGeneral? { return nil }
     
-    func willDisplayHeaderSubview(date: Date?, frame: CGRect, type: CalendarType) -> UIView? { return nil }
+    func willDisplayHeaderSubview(date: Date?, frame: CGRect, type: KVKCalendarType) -> UIView? { return nil }
     
-    func willDisplayCollectionView(frame: CGRect, type: CalendarType) -> UICollectionView? { return nil }
+    func willDisplayCollectionView(frame: CGRect, type: KVKCalendarType) -> UICollectionView? { return nil }
     
     /// **DEPRECATED**
     @available(*, deprecated, renamed: "dequeueCell")
-    func dequeueDateCell(date: Date?, type: CalendarType, collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell? { return nil }
+    func dequeueDateCell(date: Date?, type: KVKCalendarType, collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell? { return nil }
     
     /// **DEPRECATED**
     @available(*, deprecated, renamed: "dequeueHeader")
-    func dequeueHeaderView(date: Date?, type: CalendarType, collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionReusableView? { return nil }
+    func dequeueHeaderView(date: Date?, type: KVKCalendarType, collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionReusableView? { return nil }
         
     /// **DEPRECATED**
     @available(*, deprecated, renamed: "dequeueCell")
     func dequeueListCell(date: Date?, tableView: UITableView, indexPath: IndexPath) -> UITableViewCell? { return nil }
     
-    func dequeueCell<T: UIScrollView>(dateParameter: DateParameter, type: CalendarType, view: T, indexPath: IndexPath) -> KVKCalendarCellProtocol? { return nil }
+    func dequeueCell<T: UIScrollView>(dateParameter: KVKCalendarDateParameter, type: KVKCalendarType, view: T, indexPath: IndexPath) -> KVKCalendarCellProtocol? { return nil }
     
-    func dequeueHeader<T: UIScrollView>(date: Date?, type: CalendarType, view: T, indexPath: IndexPath) -> KVKCalendarHeaderProtocol? { return nil }
+    func dequeueHeader<T: UIScrollView>(date: Date?, type: KVKCalendarType, view: T, indexPath: IndexPath) -> KVKCalendarHeaderProtocol? { return nil }
 }
 
 // MARK: - Delegate protocol
 
-public protocol CalendarDelegate: AnyObject {
-    func sizeForHeader(_ date: Date?, type: CalendarType) -> CGSize?
+public protocol KVKCalendarDelegate: AnyObject {
+    func sizeForHeader(_ date: Date?, type: KVKCalendarType) -> CGSize?
     
     /// size cell for (month, year, list) view
-    func sizeForCell(_ date: Date?, type: CalendarType) -> CGSize?
+    func sizeForCell(_ date: Date?, type: KVKCalendarType) -> CGSize?
     
     /// get a selecting date
     @available(*, deprecated, renamed: "didSelectDates")
-    func didSelectDate(_ date: Date?, type: CalendarType, frame: CGRect?)
+    func didSelectDate(_ date: Date?, type: KVKCalendarType, frame: CGRect?)
     
     /// get selected dates
-    func didSelectDates(_ dates: [Date], type: CalendarType, frame: CGRect?)
+    func didSelectDates(_ dates: [Date], type: KVKCalendarType, frame: CGRect?)
     
     /// get a selecting event
-    func didSelectEvent(_ event: Event, type: CalendarType, frame: CGRect?)
+    func didSelectEvent(_ event: KVKCalendarEvent, type: KVKCalendarType, frame: CGRect?)
     
     /// tap on more fro month view
     func didSelectMore(_ date: Date, frame: CGRect?)
@@ -358,87 +358,87 @@ public protocol CalendarDelegate: AnyObject {
     func didChangeViewerFrame(_ frame: CGRect)
     
     /// drag & drop events and resize
-    func didChangeEvent(_ event: Event, start: Date?, end: Date?)
+    func didChangeEvent(_ event: KVKCalendarEvent, start: Date?, end: Date?)
     
     /// add new event
-    func didAddNewEvent(_ event: Event, _ date: Date?)
+    func didAddNewEvent(_ event: KVKCalendarEvent, _ date: Date?)
     
     /// get current displaying events
-    func didDisplayEvents(_ events: [Event], dates: [Date?])
+    func didDisplayEvents(_ events: [KVKCalendarEvent], dates: [Date?])
     
     /// get next date when the calendar scrolls (works for month view)
-    func willSelectDate(_ date: Date, type: CalendarType)
+    func willSelectDate(_ date: Date, type: KVKCalendarType)
     
     /// **DEPRECATED**
     @available(*, deprecated, renamed: "didDeselectEvent")
-    func deselectEvent(_ event: Event, animated: Bool)
+    func deselectEvent(_ event: KVKCalendarEvent, animated: Bool)
     
     /// deselect event on timeline
-    func didDeselectEvent(_ event: Event, animated: Bool)
+    func didDeselectEvent(_ event: KVKCalendarEvent, animated: Bool)
 }
 
-public extension CalendarDelegate {
-    func sizeForHeader(_ date: Date?, type: CalendarType) -> CGSize? { return nil }
+public extension KVKCalendarDelegate {
+    func sizeForHeader(_ date: Date?, type: KVKCalendarType) -> CGSize? { return nil }
     
-    func sizeForCell(_ date: Date?, type: CalendarType) -> CGSize? { return nil }
+    func sizeForCell(_ date: Date?, type: KVKCalendarType) -> CGSize? { return nil }
     
     @available(*, deprecated, renamed: "didSelectDates")
-    func didSelectDate(_ date: Date?, type: CalendarType, frame: CGRect?) {}
+    func didSelectDate(_ date: Date?, type: KVKCalendarType, frame: CGRect?) {}
     
-    func didSelectDates(_ dates: [Date], type: CalendarType, frame: CGRect?)  {}
+    func didSelectDates(_ dates: [Date], type: KVKCalendarType, frame: CGRect?)  {}
     
-    func didSelectEvent(_ event: Event, type: CalendarType, frame: CGRect?) {}
+    func didSelectEvent(_ event: KVKCalendarEvent, type: KVKCalendarType, frame: CGRect?) {}
     
     func didSelectMore(_ date: Date, frame: CGRect?) {}
     
     @available(*, deprecated, renamed: "didChangeViewerFrame")
     func eventViewerFrame(_ frame: CGRect) {}
     
-    func didChangeEvent(_ event: Event, start: Date?, end: Date?) {}
+    func didChangeEvent(_ event: KVKCalendarEvent, start: Date?, end: Date?) {}
         
-    func didAddNewEvent(_ event: Event, _ date: Date?) {}
+    func didAddNewEvent(_ event: KVKCalendarEvent, _ date: Date?) {}
     
-    func didDisplayEvents(_ events: [Event], dates: [Date?]) {}
+    func didDisplayEvents(_ events: [KVKCalendarEvent], dates: [Date?]) {}
     
-    func willSelectDate(_ date: Date, type: CalendarType) {}
+    func willSelectDate(_ date: Date, type: KVKCalendarType) {}
     
     @available(*, deprecated, renamed: "didDeselectEvent")
-    func deselectEvent(_ event: Event, animated: Bool) {}
+    func deselectEvent(_ event: KVKCalendarEvent, animated: Bool) {}
     
-    func didDeselectEvent(_ event: Event, animated: Bool) {}
+    func didDeselectEvent(_ event: KVKCalendarEvent, animated: Bool) {}
     
     func didChangeViewerFrame(_ frame: CGRect) {}
 }
 
 // MARK: - Private Display dataSource
 
-protocol DisplayDataSource: CalendarDataSource {}
+protocol DisplayDataSource: KVKCalendarDataSource {}
 
 extension DisplayDataSource {
-    public func eventsForCalendar(systemEvents: [EKEvent]) -> [Event] { return [] }
+    public func eventsForCalendar(systemEvents: [EKEvent]) -> [KVKCalendarEvent] { return [] }
 }
 
 // MARK: - Private Display delegate
 
-protocol DisplayDelegate: CalendarDelegate {
-    func didDisplayEvents(_ events: [Event], dates: [Date?], type: CalendarType)
+protocol DisplayDelegate: KVKCalendarDelegate {
+    func didDisplayEvents(_ events: [KVKCalendarEvent], dates: [Date?], type: KVKCalendarType)
 }
 
 extension DisplayDelegate {
-    public func willSelectDate(_ date: Date, type: CalendarType) {}
+    public func willSelectDate(_ date: Date, type: KVKCalendarType) {}
     
-    func deselectEvent(_ event: Event, animated: Bool) {}
+    func deselectEvent(_ event: KVKCalendarEvent, animated: Bool) {}
 }
 
 // MARK: - EKEvent
 
 public extension EKEvent {
-    func transform(text: String? = nil, textForMonth: String? = nil, textForList: String? = nil) -> Event {
-        var event = Event(ID: eventIdentifier)
+    func transform(text: String? = nil, textForMonth: String? = nil, textForList: String? = nil) -> KVKCalendarEvent {
+        var event = KVKCalendarEvent(ID: eventIdentifier)
         event.text = text ?? title
         event.start = startDate
         event.end = endDate
-        event.color = Event.Color(UIColor(cgColor: calendar.cgColor))
+        event.color = KVKCalendarEvent.Color(UIColor(cgColor: calendar.cgColor))
         event.isAllDay = isAllDay
         event.textForMonth = textForMonth ?? title
         event.textForList = textForList ?? title

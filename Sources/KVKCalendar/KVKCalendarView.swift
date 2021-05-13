@@ -1,5 +1,5 @@
 //
-//  CalendarView.swift
+//  KVKCalendarView.swift
 //  KVKCalendar
 //
 //  Created by Sergei Kviatkovskii on 02/01/2019.
@@ -8,20 +8,20 @@
 import UIKit
 import EventKit
 
-public final class CalendarView: UIView {
-    public weak var delegate: CalendarDelegate?
-    public weak var dataSource: CalendarDataSource? {
+public final class KVKCalendarView: UIView {
+    public weak var delegate: KVKCalendarDelegate?
+    public weak var dataSource: KVKCalendarDataSource? {
         didSet {
             dayView.reloadEventViewer()
         }
     }
-    public var selectedType: CalendarType {
+    public var selectedType: KVKCalendarType {
         return type
     }
     
     let eventStore = EKEventStore()
-    var type = CalendarType.day
-    var style: Style
+    var type = KVKCalendarType.day
+    var style: KVKCalendarStyle
     
     private(set) var calendarData: CalendarData
     private var weekData: WeekData
@@ -83,7 +83,7 @@ public final class CalendarView: UIView {
         return list
     }()
     
-    public init(frame: CGRect, date: Date = Date(), style: Style = Style(), years: Int = 4) {
+    public init(frame: CGRect, date: Date = Date(), style: KVKCalendarStyle = KVKCalendarStyle(), years: Int = 4) {
         self.style = style.checkStyle
         self.calendarData = CalendarData(date: date, years: years, style: style)
         self.dayData = DayData(data: calendarData, startDay: style.startWeekDay)

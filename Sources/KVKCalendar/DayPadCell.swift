@@ -8,7 +8,7 @@
 import UIKit
 
 final class DayPadCell: DayCell {
-    var padStyle: Style? {
+    var padStyle: KVKCalendarStyle? {
         didSet {
             guard let newStyle = padStyle else { return }
             

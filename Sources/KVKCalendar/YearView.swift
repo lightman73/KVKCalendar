@@ -56,7 +56,7 @@ final class YearView: UIView {
         collectionView?.reloadData()
     }
     
-    private func createCollectionView(frame: CGRect, style: YearStyle)  -> UICollectionView {
+    private func createCollectionView(frame: CGRect, style: KVKCalendarYearStyle)  -> UICollectionView {
         if let customCollectionView = dataSource?.willDisplayCollectionView(frame: frame, type: .year) {
             if customCollectionView.delegate == nil {
                 customCollectionView.delegate = self
@@ -111,7 +111,7 @@ final class YearView: UIView {
 
 extension YearView: CalendarSettingProtocol {
     
-    var currentStyle: Style {
+    var currentStyle: KVKCalendarStyle {
         data.style
     }
     
@@ -137,7 +137,7 @@ extension YearView: CalendarSettingProtocol {
         collectionView?.reloadData()
     }
     
-    func updateStyle(_ style: Style) {
+    func updateStyle(_ style: KVKCalendarStyle) {
         self.data.style = style
         setUI()
         scrollToDate(date: data.date, animated: false)

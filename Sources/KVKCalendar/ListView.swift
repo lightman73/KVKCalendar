@@ -10,13 +10,13 @@ import UIKit
 final class ListView: UIView, CalendarSettingProtocol {
     
     struct Parameters {
-        var style: Style
+        var style: KVKCalendarStyle
         let data: ListViewData
         weak var dataSource: DisplayDataSource?
         weak var delegate: DisplayDelegate?
     }
     
-    var currentStyle: Style {
+    var currentStyle: KVKCalendarStyle {
         params.style
     }
     
@@ -30,7 +30,7 @@ final class ListView: UIView, CalendarSettingProtocol {
         return table
     }()
     
-    private var style: ListViewStyle {
+    private var style: KVKCalendarListViewStyle {
         return params.style.list
     }
     
@@ -44,7 +44,7 @@ final class ListView: UIView, CalendarSettingProtocol {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateStyle(_ style: Style) {
+    func updateStyle(_ style: KVKCalendarStyle) {
         params.style = style
         setUI()
     }
@@ -63,7 +63,7 @@ final class ListView: UIView, CalendarSettingProtocol {
         tableView.frame = CGRect(origin: .zero, size: frame.size)
     }
     
-    func reloadData(_ events: [Event]) {
+    func reloadData(_ events: [KVKCalendarEvent]) {
         params.data.reloadEvents(events)
         tableView.reloadData()
     }

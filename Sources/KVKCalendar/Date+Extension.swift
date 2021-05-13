@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension Date {
+extension Date {
     func titleForLocale(_ locale: Locale, formatter: DateFormatter) -> String {
         formatter.locale = locale
         return formatter.string(from: self)

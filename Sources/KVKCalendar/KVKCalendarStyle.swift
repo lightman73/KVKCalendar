@@ -1,5 +1,5 @@
 //
-//  Style.swift
+//  KVKCalendarStyle.swift
 //  KVKCalendar
 //
 //  Created by Sergei Kviatkovskii on 02/01/2019.
@@ -9,21 +9,21 @@ import UIKit
 
 private let gainsboro: UIColor = UIColor(red: 220 / 255, green: 220 / 255, blue: 220 / 255, alpha: 1)
 
-public struct Style {
-    public var event = EventStyle()
-    public var timeline = TimelineStyle()
-    public var week = WeekStyle()
-    public var allDay = AllDayStyle()
-    public var headerScroll = HeaderScrollStyle()
-    public var month = MonthStyle()
-    public var year = YearStyle()
-    public var list = ListViewStyle()
+public struct KVKCalendarStyle {
+    public var event = KVKCalendarEventStyle()
+    public var timeline = KVKCalendarTimelineStyle()
+    public var week = KVKCalendarWeekStyle()
+    public var allDay = KVKCalendarAllDayStyle()
+    public var headerScroll = KVKCalendarHeaderScrollStyle()
+    public var month = KVKCalendarMonthStyle()
+    public var year = KVKCalendarYearStyle()
+    public var list = KVKCalendarListViewStyle()
     public var locale = Locale.current
     public var calendar = Calendar.current
     public var timezone = TimeZone.current
-    public var defaultType: CalendarType?
-    public var timeSystem: TimeHourSystem = .twentyFour
-    public var startWeekDay: StartDayType = .monday
+    public var defaultType: KVKCalendarType?
+    public var timeSystem: KVKCalendarTimeHourSystem = .twentyFour
+    public var startWeekDay: KVKCalendarStartDayType = .monday
     public var followInSystemTheme: Bool = true
     public var systemCalendars: Set<String> = []
     
@@ -32,7 +32,7 @@ public struct Style {
 
 // MARK: Header scroll style
 
-public struct HeaderScrollStyle {
+public struct KVKCalendarHeaderScrollStyle {
     public var titleDays: [String] = []
     public var heightHeaderWeek: CGFloat = 50
     public var heightSubviewHeader: CGFloat = 30
@@ -97,7 +97,7 @@ public struct HeaderScrollStyle {
 
 // MARK: Timeline style
 
-public struct TimelineStyle {
+public struct KVKCalendarTimelineStyle {
     public var startFromFirstEvent: Bool = false
     public var eventFont: UIFont = .boldSystemFont(ofSize: 12)
     public var offsetEvent: CGFloat = 3
@@ -179,7 +179,7 @@ public struct TimelineStyle {
 
 // MARK: Week style
 
-public struct WeekStyle {
+public struct KVKCalendarWeekStyle {
     public var colorBackground: UIColor = gainsboro.withAlphaComponent(0.2)
     public var colorDate: UIColor = .black
     public var colorNameDay: UIColor = .black
@@ -190,13 +190,13 @@ public struct WeekStyle {
     public var colorWeekendDate: UIColor = .gray
     public var colorWeekendBackground: UIColor = .clear
     public var colorWeekdayBackground: UIColor = .clear
-    public var selectCalendarType: CalendarType = .day
+    public var selectCalendarType: KVKCalendarType = .day
     public var showVerticalDayDivider: Bool = true
 }
 
 // MARK: Month style
 
-public struct MonthStyle {
+public struct KVKCalendarMonthStyle {
     @available(swift, deprecated: 0.4.1, obsoleted: 0.4.2, renamed: "titleFormatter")
     public var formatter: DateFormatter = {
         let format = DateFormatter()
@@ -245,7 +245,7 @@ public struct MonthStyle {
     public var colorBackgroundWeekendDate: UIColor = gainsboro.withAlphaComponent(0.2)
     public var colorBackgroundDate: UIColor = .white
     public var scrollDirection: UICollectionView.ScrollDirection = .vertical
-    public var selectCalendarType: CalendarType = .week
+    public var selectCalendarType: KVKCalendarType = .week
     public var isAnimateSelection: Bool = true
     public var isPagingEnabled: Bool = true
     public var isScrollEnabled: Bool = true
@@ -273,7 +273,7 @@ public struct MonthStyle {
 
 // MARK: Year style
 
-public struct YearStyle {
+public struct KVKCalendarYearStyle {
     @available(swift, deprecated: 0.4.1, obsoleted: 0.4.2, renamed: "titleFormatter")
     public var formatter: DateFormatter = {
         let format = DateFormatter()
@@ -326,7 +326,7 @@ public struct YearStyle {
         }
     }
     public var colorDayTitle: UIColor = .black
-    public var selectCalendarType: CalendarType = .month
+    public var selectCalendarType: KVKCalendarType = .month
     public var isAnimateSelection: Bool = true
     public var isPagingEnabled: Bool = true
     public var isAutoSelectDateScrolling: Bool = true
@@ -339,7 +339,7 @@ public struct YearStyle {
 
 // MARK: All Day style
 
-public struct AllDayStyle {
+public struct KVKCalendarAllDayStyle {
     public var backgroundColor: UIColor = gainsboro
     public var titleText: String = "all-day"
     public var titleColor: UIColor = .black
@@ -360,9 +360,9 @@ public struct AllDayStyle {
     }
 }
 
-// MARK: Event style
+// MARK: KVKCalendarEvent style
 
-public struct EventStyle {
+public struct KVKCalendarEventStyle {
     @available(swift, deprecated: 0.3.8, obsoleted: 0.3.9, renamed: "states")
     public var isEnableMoveEvent: Bool = true
     
@@ -379,24 +379,24 @@ public struct EventStyle {
     public var eventCorners: UIRectCorner = .allCorners
     public var eventCornersRadius: CGSize = CGSize(width: 2.5, height: 2.5)
     public var delayForStartMove: TimeInterval = 1.5
-    public var states: Set<EventViewGeneral.EventViewState> = [.move, .resize]
+    public var states: Set<KVKCalendarEventViewGeneral.EventViewState> = [.move, .resize]
     public var defaultHeight: CGFloat? = nil
     
     var defaultWidth: CGFloat? = nil
     var isEnableContextMenu: Bool = false
 }
 
-// MARK: List View Style
+// MARK: List View KVKCalendarStyle
 
-public struct ListViewStyle {
+public struct KVKCalendarListViewStyle {
     public var fontBullet: UIFont = .boldSystemFont(ofSize: 50)
     public var fontTitle: UIFont = .systemFont(ofSize: 17)
     public var heightHeaderView: CGFloat = 50
     public var backgroundColor: UIColor = .white
 }
 
-extension Style {
-    var checkStyle: Style {
+extension KVKCalendarStyle {
+    var checkStyle: KVKCalendarStyle {
         guard followInSystemTheme else { return self }
         
         var newStyle = self
@@ -476,10 +476,10 @@ extension Style {
     }
 }
 
-extension Style: Equatable {
+extension KVKCalendarStyle: Equatable {
     
-    public static func == (lhs: Style, rhs: Style) -> Bool {
-        func compare<E: Equatable>(_ kp: KeyPath<Style, E>) -> Bool {
+    public static func == (lhs: KVKCalendarStyle, rhs: KVKCalendarStyle) -> Bool {
+        func compare<E: Equatable>(_ kp: KeyPath<KVKCalendarStyle, E>) -> Bool {
             return lhs[keyPath: kp] == rhs[keyPath: kp]
         }
         
@@ -502,10 +502,10 @@ extension Style: Equatable {
     
 }
 
-extension YearStyle: Equatable {
+extension KVKCalendarYearStyle: Equatable {
     
-    public static func == (lhs: YearStyle, rhs: YearStyle) -> Bool {
-        func compare<E: Equatable>(_ kp: KeyPath<YearStyle, E>) -> Bool {
+    public static func == (lhs: KVKCalendarYearStyle, rhs: KVKCalendarYearStyle) -> Bool {
+        func compare<E: Equatable>(_ kp: KeyPath<KVKCalendarYearStyle, E>) -> Bool {
             return lhs[keyPath: kp] == rhs[keyPath: kp]
         }
         
@@ -545,10 +545,10 @@ extension YearStyle: Equatable {
     
 }
 
-extension MonthStyle: Equatable {
+extension KVKCalendarMonthStyle: Equatable {
     
-    public static func == (lhs: MonthStyle, rhs: MonthStyle) -> Bool {
-        func compare<E: Equatable>(_ kp: KeyPath<MonthStyle, E>) -> Bool {
+    public static func == (lhs: KVKCalendarMonthStyle, rhs: KVKCalendarMonthStyle) -> Bool {
+        func compare<E: Equatable>(_ kp: KeyPath<KVKCalendarMonthStyle, E>) -> Bool {
             return lhs[keyPath: kp] == rhs[keyPath: kp]
         }
         
@@ -600,10 +600,10 @@ extension MonthStyle: Equatable {
     
 }
 
-extension ListViewStyle: Equatable {
+extension KVKCalendarListViewStyle: Equatable {
     
-    public static func == (lhs: ListViewStyle, rhs: ListViewStyle) -> Bool {
-        func compare<E: Equatable>(_ kp: KeyPath<ListViewStyle, E>) -> Bool {
+    public static func == (lhs: KVKCalendarListViewStyle, rhs: KVKCalendarListViewStyle) -> Bool {
+        func compare<E: Equatable>(_ kp: KeyPath<KVKCalendarListViewStyle, E>) -> Bool {
             return lhs[keyPath: kp] == rhs[keyPath: kp]
         }
         
@@ -615,10 +615,10 @@ extension ListViewStyle: Equatable {
     
 }
 
-extension HeaderScrollStyle: Equatable {
+extension KVKCalendarHeaderScrollStyle: Equatable {
     
-    public static func == (lhs: HeaderScrollStyle, rhs: HeaderScrollStyle) -> Bool {
-        func compare<E: Equatable>(_ kp: KeyPath<HeaderScrollStyle, E>) -> Bool {
+    public static func == (lhs: KVKCalendarHeaderScrollStyle, rhs: KVKCalendarHeaderScrollStyle) -> Bool {
+        func compare<E: Equatable>(_ kp: KeyPath<KVKCalendarHeaderScrollStyle, E>) -> Bool {
             return lhs[keyPath: kp] == rhs[keyPath: kp]
         }
         
@@ -658,10 +658,10 @@ extension HeaderScrollStyle: Equatable {
     
 }
 
-extension WeekStyle: Equatable {
+extension KVKCalendarWeekStyle: Equatable {
     
-    public static func == (lhs: WeekStyle, rhs: WeekStyle) -> Bool {
-        func compare<E: Equatable>(_ kp: KeyPath<WeekStyle, E>) -> Bool {
+    public static func == (lhs: KVKCalendarWeekStyle, rhs: KVKCalendarWeekStyle) -> Bool {
+        func compare<E: Equatable>(_ kp: KeyPath<KVKCalendarWeekStyle, E>) -> Bool {
             return lhs[keyPath: kp] == rhs[keyPath: kp]
         }
         
@@ -681,10 +681,10 @@ extension WeekStyle: Equatable {
     
 }
 
-extension AllDayStyle: Equatable {
+extension KVKCalendarAllDayStyle: Equatable {
     
-    public static func == (lhs: AllDayStyle, rhs: AllDayStyle) -> Bool {
-        func compare<E: Equatable>(_ kp: KeyPath<AllDayStyle, E>) -> Bool {
+    public static func == (lhs: KVKCalendarAllDayStyle, rhs: KVKCalendarAllDayStyle) -> Bool {
+        func compare<E: Equatable>(_ kp: KeyPath<KVKCalendarAllDayStyle, E>) -> Bool {
             return lhs[keyPath: kp] == rhs[keyPath: kp]
         }
         
@@ -706,10 +706,10 @@ extension AllDayStyle: Equatable {
     
 }
 
-extension TimelineStyle: Equatable {
+extension KVKCalendarTimelineStyle: Equatable {
     
-    public static func == (lhs: TimelineStyle, rhs: TimelineStyle) -> Bool {
-        func compare<E: Equatable>(_ kp: KeyPath<TimelineStyle, E>) -> Bool {
+    public static func == (lhs: KVKCalendarTimelineStyle, rhs: KVKCalendarTimelineStyle) -> Bool {
+        func compare<E: Equatable>(_ kp: KeyPath<KVKCalendarTimelineStyle, E>) -> Bool {
             return lhs[keyPath: kp] == rhs[keyPath: kp]
         }
         
@@ -751,10 +751,10 @@ extension TimelineStyle: Equatable {
     
 }
 
-extension EventStyle: Equatable {
+extension KVKCalendarEventStyle: Equatable {
     
-    public static func == (lhs: EventStyle, rhs: EventStyle) -> Bool {
-        func compare<E: Equatable>(_ kp: KeyPath<EventStyle, E>) -> Bool {
+    public static func == (lhs: KVKCalendarEventStyle, rhs: KVKCalendarEventStyle) -> Bool {
+        func compare<E: Equatable>(_ kp: KeyPath<KVKCalendarEventStyle, E>) -> Bool {
             return lhs[keyPath: kp] == rhs[keyPath: kp]
         }
         

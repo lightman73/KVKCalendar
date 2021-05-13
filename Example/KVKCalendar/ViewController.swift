@@ -31,7 +31,7 @@ final class ViewController: UIViewController {
         return button
     }()
     
-    private var style: Style = {
+    private var style: KVKCalendarStyle = {
         var style = Style()
         if UIDevice.current.userInterfaceIdiom == .phone {
             style.timeline.widthTime = 40
@@ -59,7 +59,7 @@ final class ViewController: UIViewController {
         return style
     }()
     
-    private lazy var calendarView: CalendarView = {
+    private lazy var calendarView: KVKCalendarView = {
         let calendar = CalendarView(frame: view.frame, date: selectDate, style: style)
         calendar.delegate = self
         calendar.dataSource = self
@@ -135,8 +135,8 @@ final class ViewController: UIViewController {
 
 // MARK: - Calendar delegate
 
-extension ViewController: CalendarDelegate {
-    func didChangeEvent(_ event: Event, start: Date?, end: Date?) {
+extension ViewController: KVKCalendarDelegate {
+    func didChangeEvent(_ event: KVKCalendarEvent, start: Date?, end: Date?) {
         var eventTemp = event
         guard let startTemp = start, let endTemp = end else { return }
         
@@ -155,12 +155,12 @@ extension ViewController: CalendarDelegate {
         }
     }
     
-    func didSelectDates(_ dates: [Date], type: CalendarType, frame: CGRect?) {
+    func didSelectDates(_ dates: [Date], type: KVKCalendarType, frame: CGRect?) {
         selectDate = dates.first ?? Date()
         calendarView.reloadData()
     }
     
-    func didSelectEvent(_ event: Event, type: CalendarType, frame: CGRect?) {
+    func didSelectEvent(_ event: KVKCalendarEvent, type: KVKCalendarType, frame: CGRect?) {
         print(type, event)
         switch type {
         case .day:
@@ -170,7 +170,7 @@ extension ViewController: CalendarDelegate {
         }
     }
     
-    func didDeselectEvent(_ event: Event, animated: Bool) {
+    func didDeselectEvent(_ event: KVKCalendarEvent, animated: Bool) {
         print(event)
     }
     
@@ -182,7 +182,7 @@ extension ViewController: CalendarDelegate {
         eventViewer.reloadFrame(frame: frame)
     }
     
-    func didAddNewEvent(_ event: Event, _ date: Date?) {
+    func didAddNewEvent(_ event: KVKCalendarEvent, _ date: Date?) {
         var newEvent = event
         
         guard let start = date, let end = Calendar.current.date(byAdding: .minute, value: 30, to: start) else { return }
@@ -202,10 +202,10 @@ extension ViewController: CalendarDelegate {
 
 // MARK: - Calendar datasource
 
-extension ViewController: CalendarDataSource {
-    func eventsForCalendar(systemEvents: [EKEvent]) -> [Event] {
+extension ViewController: KVKCalendarDataSource {
+    func eventsForCalendar(systemEvents: [EKEvent]) -> [KVKCalendarEvent] {
         // if you want to get a system events, you need to set style.systemCalendars = ["test"]
-        let mappedEvents = systemEvents.compactMap { (event) -> Event in
+        let mappedEvents = systemEvents.compactMap { (event) -> KVKCalendarEvent in
             let startTime = timeFormatter(date: event.startDate)
             let endTime = timeFormatter(date: event.endDate)
             
@@ -215,13 +215,13 @@ extension ViewController: CalendarDataSource {
         return events + mappedEvents
     }
     
-    func willDisplayEventView(_ event: Event, frame: CGRect, date: Date?) -> EventViewGeneral? {
+    func willDisplayEventView(_ event: KVKCalendarEvent, frame: CGRect, date: Date?) -> KVKCalendarEventViewGeneral? {
         guard event.ID == "2" else { return nil }
         
         return CustomViewEvent(style: style, event: event, frame: frame)
     }
     
-    func dequeueCell<T>(dateParameter: DateParameter, type: CalendarType, view: T, indexPath: IndexPath) -> KVKCalendarCellProtocol? where T: UIScrollView {
+    func dequeueCell<T>(dateParameter: DateParameter, type: KVKCalendarType, view: T, indexPath: IndexPath) -> KVKCalendarCellProtocol? where T: UIScrollView {
         switch type {
         case .year where dateParameter.date?.month == Date().month:
             let cell = (view as? UICollectionView)?.dequeueCell(indexPath: indexPath) { (cell: CustomDayCell) in
@@ -256,14 +256,14 @@ extension ViewController: CalendarDataSource {
 // MARK: - load events
 
 extension ViewController {
-    func loadEvents(completion: ([Event]) -> Void) {
+    func loadEvents(completion: ([KVKCalendarEvent]) -> Void) {
         let decoder = JSONDecoder()
                 
         guard let path = Bundle.main.path(forResource: "events", ofType: "json"),
             let data = try? Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe),
             let result = try? decoder.decode(ItemData.self, from: data) else { return }
         
-        let events = result.data.compactMap({ (item) -> Event in
+        let events = result.data.compactMap({ (item) -> KVKCalendarEvent in
             let startDate = formatter(date: item.start)
             let endDate = formatter(date: item.end)
             let startTime = timeFormatter(date: startDate)
@@ -375,8 +375,8 @@ extension UIColor {
     }
 }
 
-final class CustomViewEvent: EventViewGeneral {
-    override init(style: Style, event: Event, frame: CGRect) {
+final class CustomViewEvent: KVKCalendarEventViewGeneral {
+    override init(style: KVKCalendarStyle, event: KVKCalendarEvent, frame: CGRect) {
         super.init(style: style, event: event, frame: frame)
         
         let imageView = UIImageView(image: UIImage(named: "ic_stub"))

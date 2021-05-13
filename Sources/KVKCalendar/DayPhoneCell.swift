@@ -9,7 +9,7 @@ import UIKit
 
 final class DayPhoneCell: DayCell {
     
-    var phoneStyle: Style? {
+    var phoneStyle: KVKCalendarStyle? {
         didSet {
             guard let newStyle = phoneStyle else { return }
             

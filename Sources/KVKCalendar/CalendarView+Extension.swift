@@ -1,5 +1,5 @@
 //
-//  CalendarView+Extension.swift
+//  KVKCalendarView+Extension.swift
 //  KVKCalendar
 //
 //  Created by Sergei Kviatkovskii on 14.12.2020.
@@ -8,7 +8,7 @@
 import UIKit
 import EventKit
 
-extension CalendarView {
+extension KVKCalendarView {
     // MARK: Public methods
     
     /// **DEPRECATED**
@@ -17,7 +17,7 @@ extension CalendarView {
         
     }
     
-    public func set(type: CalendarType, date: Date? = nil) {
+    public func set(type: KVKCalendarType, date: Date? = nil) {
         self.type = type
         switchTypeCalendar(type: type)
         
@@ -62,7 +62,7 @@ extension CalendarView {
         }
     }
     
-    public func deselectEvent(_ event: Event, animated: Bool) {
+    public func deselectEvent(_ event: KVKCalendarEvent, animated: Bool) {
         switch type {
         case .day:
             dayView.timelinePages.timelineView?.deselectEvent(event, animated: animated)
@@ -73,7 +73,7 @@ extension CalendarView {
         }
     }
     
-    public func activateMovingEventInMonth(eventView: EventViewGeneral, snapshot: UIView, gesture: UILongPressGestureRecognizer) {
+    public func activateMovingEventInMonth(eventView: KVKCalendarEventViewGeneral, snapshot: UIView, gesture: UILongPressGestureRecognizer) {
         switch gesture.state {
         case .began:
             monthView.didStartMoveEvent(eventView, snapshot: snapshot, gesture: gesture)
@@ -84,7 +84,7 @@ extension CalendarView {
         }
     }
     
-    public func movingEventInMonth(eventView: EventViewGeneral, snapshot: UIView, gesture: UIPanGestureRecognizer) {
+    public func movingEventInMonth(eventView: KVKCalendarEventViewGeneral, snapshot: UIView, gesture: UIPanGestureRecognizer) {
         switch gesture.state {
         case .changed:
             monthView.didChangeMoveEvent(gesture: gesture)
@@ -136,7 +136,7 @@ extension CalendarView {
         }
     }
     
-    private func switchTypeCalendar(type: CalendarType) {
+    private func switchTypeCalendar(type: KVKCalendarType) {
         self.type = type
         currentViewCache?.removeFromSuperview()
         
@@ -165,24 +165,24 @@ extension CalendarView {
     }
 }
 
-extension CalendarView: DisplayDataSource {
-    public func dequeueCell<T>(dateParameter: DateParameter, type: CalendarType, view: T, indexPath: IndexPath) -> KVKCalendarCellProtocol? where T : UIScrollView {
+extension KVKCalendarView: DisplayDataSource {
+    public func dequeueCell<T>(dateParameter: KVKCalendarDateParameter, type: KVKCalendarType, view: T, indexPath: IndexPath) -> KVKCalendarCellProtocol? where T : UIScrollView {
         return dataSource?.dequeueCell(dateParameter: dateParameter, type: type, view: view, indexPath: indexPath)
     }
     
-    public func dequeueHeader<T>(date: Date?, type: CalendarType, view: T, indexPath: IndexPath) -> KVKCalendarHeaderProtocol? where T : UIScrollView {
+    public func dequeueHeader<T>(date: Date?, type: KVKCalendarType, view: T, indexPath: IndexPath) -> KVKCalendarHeaderProtocol? where T : UIScrollView {
         return dataSource?.dequeueHeader(date: date, type: type, view: view, indexPath: indexPath)
     }
     
-    public func willDisplayCollectionView(frame: CGRect, type: CalendarType) -> UICollectionView? {
+    public func willDisplayCollectionView(frame: CGRect, type: KVKCalendarType) -> UICollectionView? {
         return dataSource?.willDisplayCollectionView(frame: frame, type: type)
     }
     
-    public func willDisplayEventView(_ event: Event, frame: CGRect, date: Date?) -> EventViewGeneral? {
+    public func willDisplayEventView(_ event: KVKCalendarEvent, frame: CGRect, date: Date?) -> KVKCalendarEventViewGeneral? {
         return dataSource?.willDisplayEventView(event, frame: frame, date: date)
     }
 
-    public func willDisplayHeaderSubview(date: Date?, frame: CGRect, type: CalendarType) -> UIView? {
+    public func willDisplayHeaderSubview(date: Date?, frame: CGRect, type: KVKCalendarType) -> UIView? {
         return dataSource?.willDisplayHeaderSubview(date: date, frame: frame, type: type)
     }
     
@@ -191,30 +191,30 @@ extension CalendarView: DisplayDataSource {
     }
 }
 
-extension CalendarView: DisplayDelegate {
-    public func sizeForHeader(_ date: Date?, type: CalendarType) -> CGSize? {
+extension KVKCalendarView: DisplayDelegate {
+    public func sizeForHeader(_ date: Date?, type: KVKCalendarType) -> CGSize? {
         delegate?.sizeForHeader(date, type: type)
     }
     
-    public func sizeForCell(_ date: Date?, type: CalendarType) -> CGSize? {
+    public func sizeForCell(_ date: Date?, type: KVKCalendarType) -> CGSize? {
         delegate?.sizeForCell(date, type: type)
     }
     
-    func didDisplayEvents(_ events: [Event], dates: [Date?], type: CalendarType) {
+    func didDisplayEvents(_ events: [KVKCalendarEvent], dates: [Date?], type: KVKCalendarType) {
         guard self.type == type else { return }
         
         delegate?.didDisplayEvents(events, dates: dates)
     }
     
-    public func didSelectDates(_ dates: [Date], type: CalendarType, frame: CGRect?) {
+    public func didSelectDates(_ dates: [Date], type: KVKCalendarType, frame: CGRect?) {
         delegate?.didSelectDates(dates, type: type, frame: frame)
     }
     
-    public func didDeselectEvent(_ event: Event, animated: Bool) {
+    public func didDeselectEvent(_ event: KVKCalendarEvent, animated: Bool) {
         delegate?.didDeselectEvent(event, animated: animated)
     }
     
-    public func didSelectEvent(_ event: Event, type: CalendarType, frame: CGRect?) {
+    public func didSelectEvent(_ event: KVKCalendarEvent, type: KVKCalendarType, frame: CGRect?) {
         delegate?.didSelectEvent(event, type: type, frame: frame)
     }
     
@@ -222,11 +222,11 @@ extension CalendarView: DisplayDelegate {
         delegate?.didSelectMore(date, frame: frame)
     }
     
-    public func didAddNewEvent(_ event: Event, _ date: Date?) {
+    public func didAddNewEvent(_ event: KVKCalendarEvent, _ date: Date?) {
         delegate?.didAddNewEvent(event, date)
     }
     
-    public func didChangeEvent(_ event: Event, start: Date?, end: Date?) {
+    public func didChangeEvent(_ event: KVKCalendarEvent, start: Date?, end: Date?) {
         delegate?.didChangeEvent(event, start: start, end: end)
     }
     
@@ -237,8 +237,8 @@ extension CalendarView: DisplayDelegate {
     }
 }
 
-extension CalendarView: CalendarSettingProtocol {
-    var currentStyle: Style {
+extension KVKCalendarView: CalendarSettingProtocol {
+    var currentStyle: KVKCalendarStyle {
         return style
     }
     
@@ -250,7 +250,7 @@ extension CalendarView: CalendarSettingProtocol {
         }
     }
     
-    public func updateStyle(_ style: Style) {
+    public func updateStyle(_ style: KVKCalendarStyle) {
         self.style = style
         
         if let currentView = currentViewCache as? CalendarSettingProtocol {

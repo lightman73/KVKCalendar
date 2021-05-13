@@ -9,7 +9,7 @@ import UIKit
 
 final class CurrentLineView: UIView {
     
-    private var style: Style
+    private var style: KVKCalendarStyle
 
     private lazy var timeLabel: TimelineLabel = {
         let label = TimelineLabel()
@@ -50,7 +50,7 @@ final class CurrentLineView: UIView {
     
     var date: Date?
     
-    init(style: Style, frame: CGRect) {
+    init(style: KVKCalendarStyle, frame: CGRect) {
         self.style = style
         super.init(frame: frame)
         
@@ -64,7 +64,7 @@ final class CurrentLineView: UIView {
 
 extension CurrentLineView: CalendarSettingProtocol {
     
-    var currentStyle: Style {
+    var currentStyle: KVKCalendarStyle {
         style
     }
     
@@ -83,7 +83,7 @@ extension CurrentLineView: CalendarSettingProtocol {
         dotView.setRoundCorners(radius: style.timeline.currentLineHourDotCornersRadius)
     }
     
-    func updateStyle(_ style: Style) {
+    func updateStyle(_ style: KVKCalendarStyle) {
         self.style = style
         setUI()
     }

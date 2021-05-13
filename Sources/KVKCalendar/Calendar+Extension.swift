@@ -85,7 +85,7 @@ extension UICollectionView {
     }
 }
 
-public extension UIView {
+extension UIView {
     static var identifier: String {
         return String(describing: self)
     }
@@ -192,7 +192,7 @@ extension UIRectCorner {
     }
 }
 
-public extension UITableView {
+extension UITableView {
     func dequeueCell<T: UITableViewCell>(id: String = T.identifier, indexPath: IndexPath? = nil, configure: (T) -> Void) -> T {
         register(T.self)
         
@@ -224,7 +224,7 @@ public extension UITableView {
     }
 }
 
-public extension UICollectionView {
+extension UICollectionView {
     func dequeueCell<T: UICollectionViewCell>(id: String = T.identifier, indexPath: IndexPath, configure: (T) -> Void) -> T {
         register(T.self)
         

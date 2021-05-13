@@ -19,7 +19,7 @@ final class ResizeEventView: UIView {
     
     weak var delegate: ResizeEventViewDelegate?
     
-    let event: Event
+    let event: KVKCalendarEvent
     let mainYOffset: CGFloat = 15
     let originalFrameEventView: CGRect
     var startTime: TimeContainer?
@@ -34,7 +34,7 @@ final class ResizeEventView: UIView {
     private lazy var topView = createPanView(type: .top)
     private lazy var bottomView = createPanView(type: .bottom)
     private let mainHeightOffset: CGFloat = 30
-    private let style: Style
+    private let style: KVKCalendarStyle
     
     var haveNewSize: (needSave: Bool, frame: CGRect) {
         guard originalFrameEventView.height != eventView.frame.height else {
@@ -68,7 +68,7 @@ final class ResizeEventView: UIView {
         return view
     }
     
-    init(view: UIView, event: Event, frame: CGRect, style: Style) {
+    init(view: UIView, event: KVKCalendarEvent, frame: CGRect, style: KVKCalendarStyle) {
         self.event = event
         self.originalFrameEventView = frame
         self.style = style
@@ -168,7 +168,7 @@ extension ResizeEventView: PointerInteractionProtocol {
 protocol ResizeEventViewDelegate: AnyObject {
     func didStart(gesture: UIPanGestureRecognizer, type: ResizeEventView.ResizeEventViewType)
     func didEnd(gesture: UIPanGestureRecognizer, type: ResizeEventView.ResizeEventViewType)
-    func didStartMoveResizeEvent(_ event: Event, gesture: UIPanGestureRecognizer, view: UIView)
-    func didEndMoveResizeEvent(_ event: Event, gesture: UIPanGestureRecognizer)
-    func didChangeMoveResizeEvent(_ event: Event, gesture: UIPanGestureRecognizer)
+    func didStartMoveResizeEvent(_ event: KVKCalendarEvent, gesture: UIPanGestureRecognizer, view: UIView)
+    func didEndMoveResizeEvent(_ event: KVKCalendarEvent, gesture: UIPanGestureRecognizer)
+    func didChangeMoveResizeEvent(_ event: KVKCalendarEvent, gesture: UIPanGestureRecognizer)
 }

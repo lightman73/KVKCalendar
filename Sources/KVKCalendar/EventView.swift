@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class EventView: EventViewGeneral {
+final class EventView: KVKCalendarEventViewGeneral {
     private let pointX: CGFloat = 5
         
     private(set) var textView: UITextView = {
@@ -27,7 +27,7 @@ final class EventView: EventViewGeneral {
         return image
     }()
     
-    init(event: Event, style: Style, frame: CGRect) {
+    init(event: KVKCalendarEvent, style: KVKCalendarStyle, frame: CGRect) {
         super.init(style: style, event: event, frame: frame)
         
         var textFrame = frame

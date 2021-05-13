@@ -9,7 +9,7 @@ import UIKit
 
 final class MonthView: UIView {
     private var monthData: MonthData
-    private var style: Style
+    private var style: KVKCalendarStyle
     private var collectionView: UICollectionView?
     private var eventPreview: UIView?
     
@@ -40,7 +40,7 @@ final class MonthView: UIView {
         return layout
     }()
     
-    init(data: MonthData, frame: CGRect, style: Style) {
+    init(data: MonthData, frame: CGRect, style: KVKCalendarStyle) {
         self.monthData = data
         self.style = style
         super.init(frame: frame)
@@ -56,7 +56,7 @@ final class MonthView: UIView {
         collectionView?.reloadData()
     }
     
-    func reloadData(_ events: [Event]) {
+    func reloadData(_ events: [KVKCalendarEvent]) {
         let displayableValues = monthData.reloadEventsInDays(events: events, date: monthData.date)
         delegate?.didDisplayEvents(displayableValues.events, dates: displayableValues.dates, type: .month)
         collectionView?.reloadData()
@@ -73,7 +73,7 @@ final class MonthView: UIView {
         }
     }
     
-    private func createCollectionView(frame: CGRect, style: MonthStyle) -> UICollectionView {
+    private func createCollectionView(frame: CGRect, style: KVKCalendarMonthStyle) -> UICollectionView {
         if let customCollectionView = dataSource?.willDisplayCollectionView(frame: frame, type: .month) {
             if customCollectionView.delegate == nil {
                 customCollectionView.delegate = self
@@ -153,7 +153,7 @@ final class MonthView: UIView {
 
 extension MonthView: CalendarSettingProtocol {
     
-    var currentStyle: Style {
+    var currentStyle: KVKCalendarStyle {
         style
     }
     
@@ -185,7 +185,7 @@ extension MonthView: CalendarSettingProtocol {
         collectionView?.reloadData()
     }
     
-    func updateStyle(_ style: Style) {
+    func updateStyle(_ style: KVKCalendarStyle) {
         self.style = style
         headerView.updateStyle(style)
         setUI()
@@ -384,7 +384,7 @@ extension MonthView: UICollectionViewDelegate, UICollectionViewDelegateFlowLayou
 }
 
 extension MonthView: MonthCellDelegate {
-    func didSelectEvent(_ event: Event, frame: CGRect?) {
+    func didSelectEvent(_ event: KVKCalendarEvent, frame: CGRect?) {
         delegate?.didSelectEvent(event, type: .month, frame: frame)
     }
     
@@ -392,7 +392,7 @@ extension MonthView: MonthCellDelegate {
         delegate?.didSelectMore(date, frame: frame)
     }
     
-    func didStartMoveEvent(_ event: EventViewGeneral, snapshot: UIView?, gesture: UILongPressGestureRecognizer) {
+    func didStartMoveEvent(_ event: KVKCalendarEventViewGeneral, snapshot: UIView?, gesture: UILongPressGestureRecognizer) {
         let point = gesture.location(in: collectionView)
         
         monthData.movingEvent = event

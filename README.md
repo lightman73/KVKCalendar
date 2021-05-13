@@ -11,6 +11,10 @@
 
 **KVKCalendar** is a most fully customization calendar and timeline library. Library consists of four modules for displaying various types of calendar (*day*, *week*, *month*, *year*). You can choose any module or use all. It is designed based on a standard iOS calendar, but with additional features. Timeline displays the schedule for the day and week.
 
+## Note for version **0.5.x**
+
+Version **0.5.x** has major breaking changes. All public facing classes/structs/enums have been renamed so as to avoid possible name clashes with user definitions.
+
 ## Need Help?
 
 If you have a **question** about how to use KVKCalendar in your application, ask it on StackOverflow using the [KVKCalendar](https://stackoverflow.com/questions/tagged/kvkcalendar) tag.
@@ -53,18 +57,18 @@ github "kvyatkovskys/KVKCalendar"
 ## Usage for UIKit
 
 Import `KVKCalendar`.
-Create a subclass view `CalendarView` and implement `CalendarDataSource` protocol. Create an array of class `[Event]` and return the array.
+Create a subclass view `KVKCalendarView` and implement `KVKCalendarDataSource` protocol. Create an array of class `[KVKCalendarEvent]` and return the array.
 
 ```swift
 import KVKCalendar
 
 class ViewController: UIViewController {
-    var events = [Event]()
+    var events = [KVKCalendarEvent]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let calendar = CalendarView(frame: frame)
+        let calendar = KVKCalendarView(frame: frame)
         calendar.dataSource = self
         view.addSubview(calendar)
         
@@ -81,11 +85,11 @@ class ViewController: UIViewController {
 }
 
 extension ViewController {
-    func createEvents(completion: ([Event]) -> Void) {
+    func createEvents(completion: ([KVKCalendarEvent]) -> Void) {
         let models = // Get events from storage / API
         
         let events = models.compactMap({ (item) in
-            var event = Event(ID: item.id)
+            var event = KVKCalendarEvent(ID: item.id)
             event.start = item.startDate // start date event
             event.end = item.endDate // end date event
             event.color = item.color
@@ -105,8 +109,8 @@ extension ViewController {
     }
 }
 
-extension ViewController: CalendarDataSource {
-    func eventsForCalendar(systemEvents: [EKEvent]) -> [Event] {
+extension ViewController: KVKCalendarDataSource {
+    func eventsForCalendar(systemEvents: [EKEvent]) -> [KVKCalendarEvent] {
         // if you want to get events from iOS calendars
         // set calendar names to style.systemCalendars = ["Test"]
         let mappedEvents = systemEvents.compactMap({ $0.transform() })
@@ -115,23 +119,23 @@ extension ViewController: CalendarDataSource {
 }
 ```
 
-Implement `CalendarDelegate` to handle user action and control calendar behaviour.
+Implement `KVKCalendarDelegate` to handle user action and control calendar behaviour.
 
 ```swift
 calendar.delegate = self
 ```
 
-To use a custom view for specific event or date you need to create a new view of class `EventViewGeneral` and return the view in function.
+To use a custom view for specific event or date you need to create a new view of class `KVKCalendarEventViewGeneral` and return the view in function.
 
 ```swift
-class CustomViewEvent: EventViewGeneral {
-    override init(style: Style, event: Event, frame: CGRect) {
+class CustomViewEvent: KVKCalendarEventViewGeneral {
+    override init(style: KVKCalendarStyle, event: KVKCalendarEvent, frame: CGRect) {
         super.init(style: style, event: event, frame: frame)
     }
 }
 
-// an optional function from CalendarDataSource
-func willDisplayEventView(_ event: Event, frame: CGRect, date: Date?) -> EventViewGeneral? {
+// an optional function from KVKCalendarDataSource
+func willDisplayEventView(_ event: KVKCalendarEvent, frame: CGRect, date: Date?) -> KVKCalendarEventViewGeneral? {
     guard event.ID == id else { return nil }
     
     return customEventView
@@ -140,9 +144,9 @@ func willDisplayEventView(_ event: Event, frame: CGRect, date: Date?) -> EventVi
 
 <img src="Screenshots/custom_event_view.png" width="300">
 
-To use a custom date cell, just subscribe on this optional method from `CalendarDataSource` (works for Day/Week/Month/Year views).
+To use a custom date cell, just subscribe on this optional method from `KVKCalendarDataSource` (works for Day/Week/Month/Year views).
 ```swift
-func dequeueCell<T>(date: Date?, type: CalendarType, view: T, indexPath: IndexPath) -> KVKCalendarCellProtocol? where T: UIScrollView { 
+func dequeueCell<T>(date: Date?, type: KVKCalendarType, view: T, indexPath: IndexPath) -> KVKCalendarCellProtocol? where T: UIScrollView { 
     switch type {
     case .year:
         let cell = (view as? UICollectionView)?.dequeueCell(indexPath: indexPath) { (cell: CustomYearCell) in
@@ -175,20 +179,20 @@ import SwiftUI
 import KVKCalendar
 
 struct CalendarDisplayView: UIViewRepresentable {
-    @Binding var events: [Event]
+    @Binding var events: [KVKCalendarEvent]
 
-    private var calendar: CalendarView = {
-        return CalendarView(frame: frame, style: style)
+    private var calendar: KVKCalendarView = {
+        return KVKCalendarView(frame: frame, style: style)
     }()
         
-    func makeUIView(context: UIViewRepresentableContext<CalendarDisplayView>) -> CalendarView {
+    func makeUIView(context: UIViewRepresentableContext<CalendarDisplayView>) -> KVKCalendarView {
         calendar.dataSource = context.coordinator
         calendar.delegate = context.coordinator
         calendar.reloadData()
         return calendar
     }
     
-    func updateUIView(_ uiView: CalendarView, context: UIViewRepresentableContext<CalendarDisplayView>) {
+    func updateUIView(_ uiView: KVKCalendarView, context: UIViewRepresentableContext<CalendarDisplayView>) {
         context.coordinator.events = events
     }
     
@@ -196,15 +200,15 @@ struct CalendarDisplayView: UIViewRepresentable {
         Coordinator(self)
     }
     
-    public init(events: Binding<[Event]>) {
+    public init(events: Binding<[KVKCalendarEvent]>) {
         self._events = events
     }
     
     // MARK: Calendar DataSource and Delegate
-    class Coordinator: NSObject, CalendarDataSource, CalendarDelegate {
+    class Coordinator: NSObject, KVKCalendarDataSource, KVKCalendarDelegate {
         private let view: CalendarDisplayView
         
-        var events: [Event] = [] {
+        var events: [KVKCalendarEvent] = [] {
             didSet {
                 view.calendar.reloadData()
             }
@@ -215,7 +219,7 @@ struct CalendarDisplayView: UIViewRepresentable {
             super.init()
         }
         
-        func eventsForCalendar(systemEvents: [EKEvent]) -> [Event] {
+        func eventsForCalendar(systemEvents: [EKEvent]) -> [KVKCalendarEvent] {
             return events
         }
     }
@@ -228,7 +232,7 @@ Create a new `SwiftUI` file and add `CalendarDisplayView` to `body`.
 import SwiftUI
 
 struct CalendarContentView: View {
-    @State var events: [Event] = []
+    @State var events: [KVKCalendarEvent] = []
 
     var body: some View {
         NavigationView {
@@ -240,22 +244,22 @@ struct CalendarContentView: View {
 
 ## Styles
 
-To customize calendar create an object `Style` and add to `init` class `CalendarView`.
+To customize calendar create an object `KVKCalendarStyle` and add to `init` class `CalendarView`.
 
 ```swift
-public struct Style {
-    public var event = EventStyle()
-    public var timeline = TimelineStyle()
-    public var week = WeekStyle()
-    public var allDay = AllDayStyle()
-    public var headerScroll = HeaderScrollStyle()
-    public var month = MonthStyle()
-    public var year = YearStyle()
-    public var list = ListViewStyle()
+public struct KVKCalendarStyle {
+    public var event = KVKCalendarEventStyle()
+    public var timeline = KVKCalendarTimelineStyle()
+    public var week = KVKCalendarWeekStyle()
+    public var allDay = KVKCalendarAllDayStyle()
+    public var headerScroll = KVKCalendarHeaderScrollStyle()
+    public var month = KVKCalendarMonthStyle()
+    public var year = KVKCalendarYearStyle()
+    public var list = KVKCalendarListViewStyle()
     public var locale = Locale.current
     public var calendar = Calendar.current
     public var timezone = TimeZone.current
-    public var defaultType: CalendarType?
+    public var defaultType: KVKCalendarType?
     public var timeHourSystem: TimeHourSystem = .twentyFourHour
     public var startWeekDay: StartDayType = .monday
     public var followInSystemTheme: Bool = false 

@@ -8,14 +8,14 @@
 import Foundation
 
 struct CalendarData {
-    private let style: Style
+    private let style: KVKCalendarStyle
     
     let boxCount = 42
     let date: Date
     var months = [Month]()
     var yearsCount = [Int]()
     
-    init(date: Date, years: Int, style: Style) {
+    init(date: Date, years: Int, style: KVKCalendarStyle) {
         self.date = date
         self.style = style
         
@@ -85,11 +85,11 @@ struct CalendarData {
         let formatterDay = DateFormatter()
         formatterDay.dateFormat = "EE"
         formatterDay.locale = Locale(identifier: "en_US")
-        let days = arrDates.map({ Day(type: DayType(rawValue: formatterDay.string(from: $0).uppercased()) ?? .empty, date: $0, data: []) })
+        let days = arrDates.map({ Day(type: KVKCalendarDayType(rawValue: formatterDay.string(from: $0).uppercased()) ?? .empty, date: $0, data: []) })
         return days
     }
     
-    func addStartEmptyDays(_ days: [Day], startDay: StartDayType) -> [Day] {
+    func addStartEmptyDays(_ days: [Day], startDay: KVKCalendarStartDayType) -> [Day] {
         var tempDays = [Day]()
         if let firstDay = days.first {
             var endIdx = (firstDay.date?.weekday ?? 1) - 1
@@ -109,7 +109,7 @@ struct CalendarData {
         return tempDays
     }
     
-    func addEndEmptyDays(_ days: [Day], startDay: StartDayType) -> [Day] {
+    func addEndEmptyDays(_ days: [Day], startDay: KVKCalendarStartDayType) -> [Day] {
         var tempDays = [Day]()
         if let lastDay = days.last {
             var emptyDays = [Day]()
@@ -161,9 +161,9 @@ struct Month {
 }
 
 struct Day {
-    let type: DayType
+    let type: KVKCalendarDayType
     var date: Date?
-    var events: [Event]
+    var events: [KVKCalendarEvent]
     
     static func empty() -> Day {
         return self.init()
@@ -175,14 +175,14 @@ struct Day {
         self.type = .empty
     }
     
-    init(type: DayType, date: Date?, data: [Event]) {
+    init(type: KVKCalendarDayType, date: Date?, data: [KVKCalendarEvent]) {
         self.type = type
         self.events = data
         self.date = date
     }
 }
 
-public enum DayType: String, CaseIterable {
+public enum KVKCalendarDayType: String, CaseIterable {
     case monday = "MON"
     case tuesday = "TUE"
     case wednesday = "WED"
@@ -193,6 +193,6 @@ public enum DayType: String, CaseIterable {
     case empty
 }
 
-public enum StartDayType: Int {
+public enum KVKCalendarStartDayType: Int {
     case monday, sunday
 }

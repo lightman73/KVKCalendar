@@ -11,7 +11,7 @@ final class ListViewData {
     
     struct SectionListView {
         let date: Date
-        var events: [Event]
+        var events: [KVKCalendarEvent]
     }
     
     var sections: [SectionListView]
@@ -33,7 +33,7 @@ final class ListViewData {
         return dateFormatter.string(from: dateSection)
     }
     
-    func reloadEvents(_ events: [Event]) {
+    func reloadEvents(_ events: [KVKCalendarEvent]) {
         sections = events.reduce([], { (acc, event) -> [SectionListView] in
             var accTemp = acc
             
@@ -49,7 +49,7 @@ final class ListViewData {
         })
     }
     
-    func event(indexPath: IndexPath) -> Event {
+    func event(indexPath: IndexPath) -> KVKCalendarEvent {
         return sections[indexPath.section].events[indexPath.row]
     }
     

@@ -27,8 +27,8 @@ final class MonthCell: UICollectionViewCell {
         return formatter.string(from: date)
     }
     
-    private var monthStyle = MonthStyle()
-    private var allDayStyle = AllDayStyle()
+    private var monthStyle = KVKCalendarMonthStyle()
+    private var allDayStyle = KVKCalendarAllDayStyle()
     
     private lazy var panGesture: UIPanGestureRecognizer = {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(processMovingEvent))
@@ -51,7 +51,7 @@ final class MonthCell: UICollectionViewCell {
         }
     }
     
-    var style = Style() {
+    var style = KVKCalendarStyle() {
         didSet {
             monthStyle = style.month
             allDayStyle = style.allDay
@@ -59,7 +59,7 @@ final class MonthCell: UICollectionViewCell {
     }
     weak var delegate: MonthCellDelegate?
     
-    var events: [Event] = [] {
+    var events: [KVKCalendarEvent] = [] {
         didSet {
             subviews.filter({ $0.tag != -1 }).forEach({ $0.removeFromSuperview() })
             guard bounds.height > (dateLabel.bounds.height + 10) && day.type != .empty else {
@@ -267,7 +267,7 @@ final class MonthCell: UICollectionViewCell {
                                                               lineSpacing: 0,
                                                               paragraphSpacing: 0)
             let snapshot = event.isAllDay ? view.snapshotView(afterScreenUpdates: false) : snapshotLabel
-            let eventView = EventViewGeneral(style: style, event: event, frame: view.frame)
+            let eventView = KVKCalendarEventViewGeneral(style: style, event: event, frame: view.frame)
             delegate?.didStartMoveEvent(eventView, snapshot: snapshot, gesture: gesture)
         case .cancelled, .ended, .failed:
             delegate?.didEndMoveEvent(gesture: gesture)
@@ -342,7 +342,7 @@ final class MonthCell: UICollectionViewCell {
         label.clipsToBounds = true
     }
     
-    private func addIconBeforeLabel(eventList: [Event], textAttributes: [NSAttributedString.Key: Any], bulletAttributes: [NSAttributedString.Key: Any], timeAttributes: [NSAttributedString.Key: Any], bullet: String = "\u{2022}", indentation: CGFloat = 10, lineSpacing: CGFloat = 2, paragraphSpacing: CGFloat = 10) -> NSAttributedString {
+    private func addIconBeforeLabel(eventList: [KVKCalendarEvent], textAttributes: [NSAttributedString.Key: Any], bulletAttributes: [NSAttributedString.Key: Any], timeAttributes: [NSAttributedString.Key: Any], bullet: String = "\u{2022}", indentation: CGFloat = 10, lineSpacing: CGFloat = 2, paragraphSpacing: CGFloat = 10) -> NSAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = UIDevice.current.userInterfaceIdiom == .pad ? .left : .center
         paragraphStyle.tabStops = [NSTextTab(textAlignment: .left, location: indentation, options: [:])]
@@ -403,9 +403,9 @@ extension MonthCell: PointerInteractionProtocol {
 }
 
 protocol MonthCellDelegate: AnyObject {
-    func didSelectEvent(_ event: Event, frame: CGRect?)
+    func didSelectEvent(_ event: KVKCalendarEvent, frame: CGRect?)
     func didSelectMore(_ date: Date, frame: CGRect?)
-    func didStartMoveEvent(_ event: EventViewGeneral, snapshot: UIView?, gesture: UILongPressGestureRecognizer)
+    func didStartMoveEvent(_ event: KVKCalendarEventViewGeneral, snapshot: UIView?, gesture: UILongPressGestureRecognizer)
     func didEndMoveEvent(gesture: UILongPressGestureRecognizer)
     func didChangeMoveEvent(gesture: UIPanGestureRecognizer)
 }

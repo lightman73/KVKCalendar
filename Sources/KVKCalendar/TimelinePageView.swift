@@ -64,7 +64,7 @@ final class TimelinePageView: UIView {
         mainPageView.delegate = self
     }
     
-    func updateStyle(_ style: Style) {
+    func updateStyle(_ style: KVKCalendarStyle) {
         pages.forEach({ $0.value.updateStyle(style) })
     }
     

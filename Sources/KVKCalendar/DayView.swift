@@ -16,7 +16,7 @@ final class DayView: UIView {
     private let tagEventViewer = -10
     
     struct Parameters {
-        var style: Style
+        var style: KVKCalendarStyle
         var data: DayData
     }
     
@@ -154,7 +154,7 @@ final class DayView: UIView {
         scrollHeaderDay.setDate(date)
     }
     
-    func reloadData(_ events: [Event]) {
+    func reloadData(_ events: [KVKCalendarEvent]) {
         parameters.data.events = events
         timelinePages.timelineView?.create(dates: [parameters.data.date], events: events, selectedDate: parameters.data.date)
     }
@@ -187,13 +187,13 @@ final class DayView: UIView {
 }
 
 extension DayView: DisplayDataSource {
-    func willDisplayEventView(_ event: Event, frame: CGRect, date: Date?) -> EventViewGeneral? {
+    func willDisplayEventView(_ event: KVKCalendarEvent, frame: CGRect, date: Date?) -> KVKCalendarEventViewGeneral? {
         return dataSource?.willDisplayEventView(event, frame: frame, date: date)
     }
 }
 
 extension DayView {
-    func didSelectDateScrollHeader(_ date: Date?, type: CalendarType) {
+    func didSelectDateScrollHeader(_ date: Date?, type: KVKCalendarType) {
         guard let selectDate = date else { return }
         
         parameters.data.date = selectDate
@@ -202,11 +202,11 @@ extension DayView {
 }
 
 extension DayView: TimelineDelegate {
-    func didDisplayEvents(_ events: [Event], dates: [Date?]) {
+    func didDisplayEvents(_ events: [KVKCalendarEvent], dates: [Date?]) {
         delegate?.didDisplayEvents(events, dates: dates, type: .day)
     }
     
-    func didSelectEvent(_ event: Event, frame: CGRect?) {
+    func didSelectEvent(_ event: KVKCalendarEvent, frame: CGRect?) {
         delegate?.didSelectEvent(event, type: .day, frame: frame)
     }
     
@@ -218,7 +218,7 @@ extension DayView: TimelineDelegate {
         scrollHeaderDay.selectDate(offset: -1, needScrollToDate: true)
     }
     
-    func didResizeEvent(_ event: Event, startTime: ResizeTime, endTime: ResizeTime) {
+    func didResizeEvent(_ event: KVKCalendarEvent, startTime: ResizeTime, endTime: ResizeTime) {
         var startComponents = DateComponents()
         startComponents.year = event.start.year
         startComponents.month = event.start.month
@@ -238,7 +238,7 @@ extension DayView: TimelineDelegate {
         delegate?.didChangeEvent(event, start: startDate, end: endDate)
     }
     
-    func didAddNewEvent(_ event: Event, minute: Int, hour: Int, point: CGPoint) {
+    func didAddNewEvent(_ event: KVKCalendarEvent, minute: Int, hour: Int, point: CGPoint) {
         var components = DateComponents()
         components.year = parameters.data.date.year
         components.month = parameters.data.date.month
@@ -249,7 +249,7 @@ extension DayView: TimelineDelegate {
         delegate?.didAddNewEvent(event, date)
     }
     
-    func didChangeEvent(_ event: Event, minute: Int, hour: Int, point: CGPoint, newDay: Int?) {
+    func didChangeEvent(_ event: KVKCalendarEvent, minute: Int, hour: Int, point: CGPoint, newDay: Int?) {
         var startComponents = DateComponents()
         startComponents.year = event.start.year
         startComponents.month = event.start.month
@@ -274,7 +274,7 @@ extension DayView: TimelineDelegate {
 
 extension DayView: CalendarSettingProtocol {
     
-    var currentStyle: Style {
+    var currentStyle: KVKCalendarStyle {
         parameters.style
     }
     
@@ -325,7 +325,7 @@ extension DayView: CalendarSettingProtocol {
         timelinePages.reloadCacheControllers()
     }
     
-    func updateStyle(_ style: Style) {
+    func updateStyle(_ style: KVKCalendarStyle) {
         parameters.style = style
         scrollHeaderDay.updateStyle(style)
         timelinePages.updateStyle(style)

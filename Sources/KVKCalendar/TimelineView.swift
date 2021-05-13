@@ -12,9 +12,9 @@ final class TimelineView: UIView, EventDateProtocol {
     weak var delegate: TimelineDelegate?
     weak var dataSource: DisplayDataSource?
     
-    var deselectEvent: ((Event) -> Void)?
+    var deselectEvent: ((KVKCalendarEvent) -> Void)?
     
-    var style: Style {
+    var style: KVKCalendarStyle {
         didSet {
             timeSystem = style.timeSystem
             availabilityHours = timeSystem.hours
@@ -41,12 +41,12 @@ final class TimelineView: UIView, EventDateProtocol {
     private(set) var tagStubEvent = -80
     private(set) var timeLabels = [TimelineLabel]()
     private(set) var availabilityHours: [String]
-    private var timeSystem: TimeHourSystem
+    private var timeSystem: KVKCalendarTimeHourSystem
     private var timer: Timer?
-    private(set) var events = [Event]()
+    private(set) var events = [KVKCalendarEvent]()
     private(set) var dates = [Date?]()
     private(set) var selectedDate: Date?
-    private(set) var type: CalendarType
+    private(set) var type: KVKCalendarType
     
     private(set) lazy var shadowView: ShadowDayView = {
         let view = ShadowDayView()
@@ -78,7 +78,7 @@ final class TimelineView: UIView, EventDateProtocol {
         return scroll
     }()
     
-    init(type: CalendarType, style: Style, frame: CGRect) {
+    init(type: KVKCalendarType, style: KVKCalendarStyle, frame: CGRect) {
         self.type = type
         self.timeSystem = style.timeSystem
         self.availabilityHours = timeSystem.hours
@@ -103,7 +103,7 @@ final class TimelineView: UIView, EventDateProtocol {
         stopTimer()
     }
     
-    private func calculateCrossEvents(_ events: [Event]) -> [TimeInterval: CrossEvent] {
+    private func calculateCrossEvents(_ events: [KVKCalendarEvent]) -> [TimeInterval: CrossEvent] {
         var eventsTemp = events
         var crossEvents = [TimeInterval: CrossEvent]()
         
@@ -244,7 +244,7 @@ final class TimelineView: UIView, EventDateProtocol {
         scrollView.scrollRectToVisible(frame, animated: true)
     }
     
-    func create(dates: [Date?], events: [Event], selectedDate: Date?) {
+    func create(dates: [Date?], events: [KVKCalendarEvent], selectedDate: Date?) {
         isResizeEnableMode = false
         delegate?.didDisplayEvents(events, dates: dates)
         
@@ -312,9 +312,9 @@ final class TimelineView: UIView, EventDateProtocol {
             let eventsByDate = filteredEvents.filter({ compareStartDate(date, with: $0) || compareEndDate(date, with: $0) || checkMultipleDate(date, with: $0) })
             let allDayEvents = filteredAllDayEvents.filter({ compareStartDate(date, with: $0) || compareEndDate(date, with: $0) })
             
-            let recurringEventByDate: [Event]
+            let recurringEventByDate: [KVKCalendarEvent]
             if !recurringEvents.isEmpty, let dt = date {
-                recurringEventByDate = recurringEvents.reduce([], { (acc, event) -> [Event] in
+                recurringEventByDate = recurringEvents.reduce([], { (acc, event) -> [KVKCalendarEvent] in
                     guard !eventsByDate.contains(where: { $0.ID == event.ID })
                             && dt.compare(event.start) == .orderedDescending else { return acc }
                     
@@ -339,7 +339,7 @@ final class TimelineView: UIView, EventDateProtocol {
             
             // count event cross in one hour
             let crossEvents = calculateCrossEvents(sortedEventsByDate)
-            var pagesCached = [EventViewGeneral]()
+            var pagesCached = [KVKCalendarEventViewGeneral]()
             
             if !sortedEventsByDate.isEmpty {
                 // create event
